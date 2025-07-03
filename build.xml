@@ -3,11 +3,16 @@
          basedir=".">
 
     <property name="VERSION"
-              value="0.0.1" />
+              value="1.0.0" />
 
     <tstamp>
         <format property="DATE"
                 pattern="%d.%m.%Y" />
+    </tstamp>
+
+	<tstamp>
+	    <format property="YEAR"
+	            pattern="%Y" />
     </tstamp>
 
     <property name="build"
@@ -37,6 +42,8 @@
                            value="${VERSION}" />
                     <token key="date"
                            value="${DATE}" />
+                    <token key="year"
+                           value="${YEAR}" />
                 </replacetokens>
             </filterchain>
         </copy>
@@ -76,6 +83,28 @@
                 <include name="**/*" />
             </fileset>
         </zip>
+
+ 		<exec command="sha256sum ${dist}/plg_content_jutypography_v${VERSION}.zip | awk '{print $1}'"
+	          outputProperty="archive.sha256"
+	          checkreturn="true" />
+
+	    <delete file="update.xml" />
+
+	    <copy file="build_update.xml"
+	          tofile="update.xml">
+            <filterchain>
+                <replacetokens>
+	                 <token key="cheksum"
+	                        value="${archive.sha256}" />
+                    <token key="version"
+                           value="${VERSION}" />
+                    <token key="date"
+                           value="${DATE}" />
+	                <token key="year"
+	                       value="${YEAR}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
 
         <delete dir="${build}" />
     </target>

@@ -3,14 +3,23 @@
            group="content"
            method="upgrade">
     <name>plg_content_jutypography</name>
-    <author>Denys Nosov</author>
     <creationDate>@date@</creationDate>
-    <copyright>(C) Denys Nosov</copyright>
+    <copyright>(C) @year@ Denys Nosov, Joomla! Ukraine</copyright>
     <license>GNU General Public License version 3 or later</license>
+    <author>Denys Nosov, Joomla! Ukraine</author>
     <authorEmail>denys@joomla-ua.org</authorEmail>
+    <authorUrl>https://joomla-ua.org</authorUrl>
     <version>@version@</version>
     <description>PLG_CONTENT_JUTYPOGRAPHY_DESCRIPTION</description>
     <namespace path="src">JU\Plugin\Content\JUTypography</namespace>
+
+    <updateservers>
+        <server type="extension"
+                priority="1"
+                name="JUTypography">
+            <![CDATA[https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml]]>
+        </server>
+    </updateservers>
 
     <languages folder="language">
 		<language tag="en-GB">en-GB/plg_content_jutypography.ini</language>
@@ -21,4 +30,9 @@
         <folder plugin="jutypography">services</folder>
         <folder>src</folder>
     </files>
+
+    <compatibility>
+        <version>4</version>
+        <version>5</version>
+    </compatibility>
 </extension>

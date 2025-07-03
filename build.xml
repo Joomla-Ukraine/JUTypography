@@ -1,0 +1,87 @@
+<project name="jutypography"
+         default="dist"
+         basedir=".">
+
+    <property name="VERSION"
+              value="0.0.1" />
+
+    <tstamp>
+        <format property="DATE"
+                pattern="%d.%m.%Y" />
+    </tstamp>
+
+    <property name="build"
+              value="build" />
+
+    <property name="dist"
+              value="dist" />
+
+    <property name="filename"
+              value="plg_content_jutypography_v${VERSION}.zip" />
+
+    <target name="init"
+            depends="clean">
+
+        <mkdir dir="${build}" />
+        <mkdir dir="${dist}" />
+
+    </target>
+
+    <target name="replace">
+
+        <copy file="jutypography.xml"
+              todir="${build}">
+            <filterchain>
+                <replacetokens>
+                    <token key="version"
+                           value="${VERSION}" />
+                    <token key="date"
+                           value="${DATE}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+    </target>
+
+    <target name="copy">
+
+        <copy todir="${build}/language">
+            <fileset dir="language">
+                <include name="**" />
+            </fileset>
+        </copy>
+
+        <copy todir="${build}/services">
+            <fileset dir="services">
+                <include name="**" />
+            </fileset>
+        </copy>
+
+        <copy todir="${build}/src">
+            <fileset dir="src">
+                <include name="**" />
+            </fileset>
+        </copy>
+
+        <copy file="jutypography.xml"
+              todir="${build}" />
+
+    </target>
+
+    <target name="dist"
+            depends="init, replace, copy">
+
+        <zip destfile="${dist}/${filename}">
+            <fileset dir="${build}/">
+                <include name="**/*" />
+            </fileset>
+        </zip>
+
+        <delete dir="${build}" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}" />
+    </target>
+
+</project>

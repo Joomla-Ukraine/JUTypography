@@ -1,0 +1,13 @@
+{
+    "name": "ju/jutypography",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Denys",
+            "email": "denys@joomla-ua.org"
+        }
+    ],
+    "require": {
+        "mundschenk-at/php-typography": "^6.7"
+    }
+}

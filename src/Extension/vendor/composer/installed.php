@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'ju/jutypography',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '0e592245e87f4e7965b1b05980c67511113ca9ac',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        'ju/jutypography' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '0e592245e87f4e7965b1b05980c67511113ca9ac',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'masterminds/html5' => array(
+            'pretty_version' => '2.9.0',
+            'version' => '2.9.0.0',
+            'reference' => 'f5ac2c0b0a2eefca70b2ce32a5809992227e75a6',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../masterminds/html5',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'mundschenk-at/php-typography' => array(
+            'pretty_version' => 'v6.7.0',
+            'version' => '6.7.0.0',
+            'reference' => '6b0414811f42e53e101f5ea5a8023c63eafd3dcb',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mundschenk-at/php-typography',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

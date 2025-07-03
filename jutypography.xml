@@ -13,12 +13,11 @@
     <description>PLG_CONTENT_JUTYPOGRAPHY_DESCRIPTION</description>
     <namespace path="src">JU\Plugin\Content\JUTypography</namespace>
 
+    <update>https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</update>
     <updateservers>
         <server type="extension"
                 priority="1"
-                name="plg_content_jutypography">
-            <![CDATA[https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml]]>
-        </server>
+                name="plg_content_jutypography">https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</server>
     </updateservers>
 
     <languages folder="language">

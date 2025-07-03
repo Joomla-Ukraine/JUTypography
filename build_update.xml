@@ -16,9 +16,7 @@
         </tags>
         <maintainer>Denys Nosov</maintainer>
         <maintainerurl>https://joomla-ua.org</maintainerurl>
-        <section>Testing</section>
-        <client_id>0</client_id>
-        <client>0</client>
+        <section>STS</section>
         <targetplatform name="joomla"
                         version="4\.*|5\.*" />
         <php_minimum>8.1</php_minimum>

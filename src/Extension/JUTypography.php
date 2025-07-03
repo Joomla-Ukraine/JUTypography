@@ -104,11 +104,11 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$settings->set_classes_to_ignore();
 			// Smart characters.
 			$settings->set_smart_quotes();
-			$settings->set_smart_quotes_primary();
+			$settings->set_smart_quotes_primary('doubleGuillemets');
 			$settings->set_smart_quotes_secondary();
 			$settings->set_smart_quotes_exceptions();
 			$settings->set_smart_dashes();
-			$settings->set_smart_dashes_style('international');
+			$settings->set_smart_dashes_style();
 			$settings->set_smart_ellipses();
 			$settings->set_smart_diacritics();
 			$settings->set_diacritic_language('uk-UA');
@@ -143,16 +143,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$settings->set_style_hanging_punctuation(false);
 			$settings->set_initial_quote_tags();
 			// Hyphenation.
-			$settings->set_hyphenation();
-			$settings->set_hyphenation_language('uk-UA');
-			$settings->set_min_length_hyphenation();
-			$settings->set_min_before_hyphenation();
-			$settings->set_min_after_hyphenation();
-			$settings->set_hyphenate_headings();
-			$settings->set_hyphenate_all_caps();
-			$settings->set_hyphenate_title_case();
-			$settings->set_hyphenate_compounds();
-			$settings->set_hyphenation_exceptions();
+			$settings->set_hyphenation(false);
 
 			$typo = new PHP_Typography();
 			$text = $typo->process($text, $settings);
@@ -164,72 +155,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
 		return $text;
 	}
-
-	/**
-	 * @param string $html
-	 * @param array  $excludeDomains
-	 * @param string $currentHost
-	 *
-	 * @return string
-	 */
-	protected function links($html, array $excludeDomains = [], $currentHost = null): string
-	{
-		libxml_use_internal_errors(true);
-		if($currentHost === null)
-		{
-			$currentHost = $_SERVER[ 'HTTP_HOST' ] ?? '';
-		}
-
-		$html = trim($html);
-		if($html === '')
-		{
-			return $html;
-		}
-
-		$dom = new DOMDocument();
-		$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
-		$links = $dom->getElementsByTagName('a');
-
-		foreach($links as $link)
-		{
-			$href = $link->getAttribute('href');
-			if(empty($href))
-			{
-				continue;
-			}
-
-			if(preg_match('/^(mailto:|tel:|javascript:|#)/i', $href))
-			{
-				continue;
-			}
-
-			$host = parse_url($href, PHP_URL_HOST);
-			if(empty($host))
-			{
-				continue;
-			}
-
-			$cleanHost           = preg_replace('/^www\./i', '', $host);
-			$cleanCurrent        = preg_replace('/^www\./i', '', $currentHost);
-			$excludeDomainsClean = array_map(static fn($d) => preg_replace('/^www\./i', '', $d), $excludeDomains);
-
-			if($cleanHost !== $cleanCurrent && !in_array($cleanHost, $excludeDomainsClean, true))
-			{
-				$link->setAttribute('target', '_blank');
-				$link->setAttribute('rel', 'nofollow noopener noreferrer');
-			}
-		}
-
-		$body      = $dom->getElementsByTagName('body')->item(0);
-		$innerHTML = '';
-		foreach($body->childNodes as $child)
-		{
-			$innerHTML .= $dom->saveHTML($child);
-		}
-
-		return $innerHTML;
-	}
-
 
 	/**
 	 * @param          $html
@@ -287,7 +212,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function removeDashList($text): string
 	{
-		return str_replace([ '<li>-', '<li> -' ], '<li>', $text);
+		return str_replace([ '<li>-', '<li> -', '<li> &bull;' ], '<li>', $text);
 	}
 
 	/**

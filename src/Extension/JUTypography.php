@@ -102,21 +102,20 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$settings = new Settings();
 			$settings->set_tags_to_ignore();
 			$settings->set_classes_to_ignore();
-			$settings->set_ids_to_ignore();
 			// Smart characters.
 			$settings->set_smart_quotes();
 			$settings->set_smart_quotes_primary();
 			$settings->set_smart_quotes_secondary();
 			$settings->set_smart_quotes_exceptions();
 			$settings->set_smart_dashes();
-			$settings->set_smart_dashes_style();
+			$settings->set_smart_dashes_style('international');
 			$settings->set_smart_ellipses();
 			$settings->set_smart_diacritics();
-			$settings->set_diacritic_language();
+			$settings->set_diacritic_language('uk-UA');
 			$settings->set_diacritic_custom_replacements();
 			$settings->set_smart_marks();
 			$settings->set_smart_ordinal_suffix();
-			$settings->set_smart_ordinal_suffix_match_roman_numerals();
+			$settings->set_smart_ordinal_suffix_match_roman_numerals(true);
 			$settings->set_smart_math();
 			$settings->set_smart_fractions();
 			$settings->set_smart_exponents();
@@ -125,7 +124,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$settings->set_single_character_word_spacing();
 			$settings->set_fraction_spacing();
 			$settings->set_unit_spacing();
-			$settings->set_french_punctuation_spacing();
 			$settings->set_units();
 			$settings->set_dash_spacing();
 			$settings->set_dewidow();
@@ -155,8 +153,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$settings->set_hyphenate_title_case();
 			$settings->set_hyphenate_compounds();
 			$settings->set_hyphenation_exceptions();
-			// Parser error handling.
-			$settings->set_ignore_parser_errors();
 
 			$typo = new PHP_Typography();
 			$text = $typo->process($text, $settings);

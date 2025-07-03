@@ -16,7 +16,7 @@
     <updateservers>
         <server type="extension"
                 priority="1"
-                name="JUTypography">
+                name="plg_content_jutypography">
             <![CDATA[https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml]]>
         </server>
     </updateservers>

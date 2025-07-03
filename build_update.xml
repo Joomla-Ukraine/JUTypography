@@ -3,7 +3,7 @@
     <update>
         <name>JUTypography</name>
         <description><![CDATA[JUTypography - Content plugin for typography article after save<br />Update to JUTypography @version@ now!<br /><span style="font-size: 85%;">@year@ &copy; Joomla! Ukraine. All rights reserved!</span>]]></description>
-        <element>plg_content_jutypography</element>
+        <element>jutypography</element>
         <type>plugin</type>
         <version>@version@</version>
         <infourl title="Joomla! Ukraine">https://github.com/Joomla-Ukraine/JUTypography</infourl>

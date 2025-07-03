@@ -54,11 +54,24 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			return;
 		}
 
-		$article->title     = $this->typography($article->title, true);
-		$article->text      = $this->typography($article->text);
-		$article->introtext = $this->typography($article->introtext, false, false);
-		$article->fulltext  = $this->typography($article->fulltext);
-		$article->metadesc  = $this->typography($article->metadesc, true);
+		$article->title = $this->typography($article->title, true);
+
+		if(isset($article->text))
+		{
+			$article->text = $this->typography($article->text);
+		}
+
+		if(isset($article->introtext))
+		{
+			$article->introtext = $this->typography($article->introtext, false, false);
+		}
+
+		if(isset($article->fulltext))
+		{
+			$article->fulltext = $this->typography($article->fulltext);
+		}
+
+		$article->metadesc = $this->typography($article->metadesc, true);
 	}
 
 	/**
@@ -66,9 +79,9 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 * @param bool   $strip
 	 * @param bool   $removeAttr
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	private function typography($text, bool $strip = false, bool $removeAttr = true): string|null
+	private function typography($text, bool $strip = false, bool $removeAttr = true): string
 	{
 		if($strip === true)
 		{
@@ -76,6 +89,8 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		}
 		else
 		{
+			$text = $this->links($text);
+
 			if(stripos($text, '<p') === false)
 			{
 				$text = $this->autoParagraphs($text);
@@ -157,10 +172,76 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	}
 
 	/**
+	 * @param string $html
+	 * @param array  $excludeDomains
+	 * @param string $currentHost
+	 *
+	 * @return string
+	 */
+	protected function links($html, array $excludeDomains = [], $currentHost = null): string
+	{
+		libxml_use_internal_errors(true);
+		if($currentHost === null)
+		{
+			$currentHost = $_SERVER[ 'HTTP_HOST' ] ?? '';
+		}
+
+		$html = trim($html);
+		if($html === '')
+		{
+			return $html;
+		}
+
+		$dom = new DOMDocument();
+		$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+		$links = $dom->getElementsByTagName('a');
+
+		foreach($links as $link)
+		{
+			$href = $link->getAttribute('href');
+			if(empty($href))
+			{
+				continue;
+			}
+
+			if(preg_match('/^(mailto:|tel:|javascript:|#)/i', $href))
+			{
+				continue;
+			}
+
+			$host = parse_url($href, PHP_URL_HOST);
+			if(empty($host))
+			{
+				continue;
+			}
+
+			$cleanHost           = preg_replace('/^www\./i', '', $host);
+			$cleanCurrent        = preg_replace('/^www\./i', '', $currentHost);
+			$excludeDomainsClean = array_map(static fn($d) => preg_replace('/^www\./i', '', $d), $excludeDomains);
+
+			if($cleanHost !== $cleanCurrent && !in_array($cleanHost, $excludeDomainsClean, true))
+			{
+				$link->setAttribute('target', '_blank');
+				$link->setAttribute('rel', 'nofollow noopener noreferrer');
+			}
+		}
+
+		$body      = $dom->getElementsByTagName('body')->item(0);
+		$innerHTML = '';
+		foreach($body->childNodes as $child)
+		{
+			$innerHTML .= $dom->saveHTML($child);
+		}
+
+		return $innerHTML;
+	}
+
+
+	/**
 	 * @param          $html
 	 * @param string[] $tags
 	 *
-	 * @return string|null
+	 * @return string
 	 */
 	protected function removeAttributesFromTags($html, array $tags = [
 		'h1',
@@ -175,7 +256,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		'table',
 		'tr',
 		'td',
-	]): string|null
+	]): string
 	{
 		libxml_use_internal_errors(true);
 
@@ -208,9 +289,9 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	/**
 	 * @param        $text
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	protected function removeDashList($text): string|null
+	protected function removeDashList($text): string
 	{
 		return str_replace([ '<li>-', '<li> -' ], '<li>', $text);
 	}
@@ -218,9 +299,9 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	/**
 	 * @param        $text
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	protected function removeStrongHeaders($text): string|null
+	protected function removeStrongHeaders($text): string
 	{
 		libxml_use_internal_errors(true);
 
@@ -262,9 +343,9 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	/**
 	 * @param        $text
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	protected function removeEmptyParagraphs($text): string|null
+	protected function removeEmptyParagraphs($text): string
 	{
 		return preg_replace('~<p[^>]*>(?:\s|&nbsp;|&#160;| |&thinsp;|&ensp;|&emsp;|&ZeroWidthSpace;|&#8203;|&#xfeff;)*</p>~iu', '', $text);
 	}

@@ -2,7 +2,7 @@
 <extension type="plugin"
            group="content"
            method="upgrade">
-    <name>plg_content_jutypography</name>
+    <name>JUTypography</name>
     <creationDate>@date@</creationDate>
     <copyright>(C) @year@ Denys Nosov, Joomla! Ukraine</copyright>
     <license>GNU General Public License version 3 or later</license>
@@ -17,7 +17,7 @@
     <updateservers>
         <server type="extension"
                 priority="1"
-                name="plg_content_jutypography">https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</server>
+                name="JUTypography">https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</server>
     </updateservers>
 
     <languages folder="language">
@@ -29,9 +29,4 @@
         <folder plugin="jutypography">services</folder>
         <folder>src</folder>
     </files>
-
-    <compatibility>
-        <version>4</version>
-        <version>5</version>
-    </compatibility>
 </extension>

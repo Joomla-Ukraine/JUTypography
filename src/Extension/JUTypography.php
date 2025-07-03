@@ -89,8 +89,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		}
 		else
 		{
-			$text = $this->links($text);
-
 			if(stripos($text, '<p') === false)
 			{
 				$text = $this->autoParagraphs($text);

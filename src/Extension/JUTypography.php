@@ -59,38 +59,37 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			return;
 		}
 
-		$article->title    = $this->content($article->title, true);
-		$article->metadesc = $this->content($article->metadesc, true);
+		$article->title    = $this->typography($article->title, true);
+		$article->metadesc = $this->typography($article->metadesc, true);
 
 		if(isset($article->text))
 		{
-			$article->text = $this->content($article->text);
+			$article->text = $this->content($article->text, false);
 		}
 
 		if(isset($article->introtext))
 		{
-			$article->introtext = $this->content($article->introtext, false, false);
+			$article->introtext = $this->content($article->introtext, false);
 		}
 
 		if(isset($article->fulltext))
 		{
-			$article->fulltext = $this->content($article->fulltext);
+			$article->fulltext = $this->content($article->fulltext, false);
 		}
 	}
 
 	/**
 	 * @param      $html
-	 * @param bool $strip
-	 * @param bool $removeAttr
+	 * @param      $strip
 	 *
 	 * @return string
 	 * @throws \Exception
 	 */
-	protected function content($html, bool $strip = false, bool $removeAttr = true): string
+	protected function content($html, $strip): string
 	{
 		$html = $this->protectBlocks($html);
 
-		$html = $this->typography($html, $strip, $removeAttr);
+		$html = $this->typography($html, $strip);
 
 		return $this->restoreBlocks($html);
 	}
@@ -154,105 +153,105 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	/**
 	 * @param        $text
 	 * @param bool   $strip
-	 * @param bool   $removeAttr
 	 *
 	 * @return string
 	 * @throws \Exception
 	 */
-	protected function typography($text, bool $strip = false, bool $removeAttr = true): string
+	protected function typography($text, bool $strip = false): string
 	{
 		if($strip === true)
 		{
 			$text = strip_tags($text);
 		}
-		else
+
+		if($strip === false)
 		{
 			if(stripos($text, '<p') === false)
 			{
 				$text = $this->autoParagraphs($text);
 			}
 
-			if($removeAttr === true)
-			{
-				$text = $this->removeAttributesFromTags($text);
-			}
+			$text = $this->removeAttributesFromTags($text);
+		}
 
-			$lang     = Factory::getApplication()->getLanguage();
-			$settings = new Settings();
+		$lang     = Factory::getApplication()->getLanguage();
+		$settings = new Settings();
 
-			$settings->set_tags_to_ignore([
-				'hr',
-				'iframe',
-				'code',
-				'head',
-				'kbd',
-				'object',
-				'option',
-				'pre',
-				'samp',
-				'script',
-				'noscript',
-				'noembed',
-				'select',
-				'style',
-				'textarea',
-				'title',
-				'var',
-				'math'
-			]);
+		$settings->set_tags_to_ignore([
+			'hr',
+			'iframe',
+			'code',
+			'head',
+			'kbd',
+			'object',
+			'option',
+			'pre',
+			'samp',
+			'script',
+			'noscript',
+			'noembed',
+			'select',
+			'style',
+			'textarea',
+			'title',
+			'var',
+			'math'
+		]);
 
-			$settings->set_classes_to_ignore([
-				'system-pagebreak',
-				'vcard',
-				'noTypo'
-			]);
+		$settings->set_classes_to_ignore([
+			'system-pagebreak',
+			'vcard',
+			'noTypo'
+		]);
 
-			// Smart characters.
-			$settings->set_smart_quotes();
-			$settings->set_smart_quotes_primary('doubleGuillemets');
-			$settings->set_smart_quotes_secondary();
-			$settings->set_smart_quotes_exceptions();
-			$settings->set_smart_dashes();
-			$settings->set_smart_dashes_style();
-			$settings->set_smart_ellipses();
-			$settings->set_smart_diacritics();
-			$settings->set_diacritic_language($lang->getTag());
-			$settings->set_diacritic_custom_replacements();
-			$settings->set_smart_marks();
-			$settings->set_smart_ordinal_suffix();
-			$settings->set_smart_ordinal_suffix_match_roman_numerals(true);
-			$settings->set_smart_math();
-			$settings->set_smart_fractions();
-			$settings->set_smart_exponents();
-			$settings->set_smart_area_units();
-			// Smart spacing.
-			$settings->set_single_character_word_spacing();
-			$settings->set_fraction_spacing();
-			$settings->set_unit_spacing();
-			$settings->set_units();
-			$settings->set_dash_spacing();
-			$settings->set_dewidow();
-			$settings->set_max_dewidow_length();
-			$settings->set_max_dewidow_pull();
-			$settings->set_dewidow_word_number();
-			$settings->set_wrap_hard_hyphens();
-			$settings->set_url_wrap();
-			$settings->set_email_wrap();
-			$settings->set_min_after_url_wrap();
-			$settings->set_space_collapse();
-			// Character styling.
-			$settings->set_style_ampersands(false);
-			$settings->set_style_caps(false);
-			$settings->set_style_initial_quotes(false);
-			$settings->set_style_numbers(false);
-			$settings->set_style_hanging_punctuation(false);
-			$settings->set_initial_quote_tags();
-			// Hyphenation.
-			$settings->set_hyphenation(false);
+		// Smart characters.
+		$settings->set_smart_quotes();
+		$settings->set_smart_quotes_primary('doubleGuillemets');
+		$settings->set_smart_quotes_secondary();
+		$settings->set_smart_quotes_exceptions();
+		$settings->set_smart_dashes();
+		$settings->set_smart_dashes_style();
+		$settings->set_smart_ellipses();
+		$settings->set_smart_diacritics();
+		$settings->set_diacritic_language($lang->getTag());
+		$settings->set_diacritic_custom_replacements();
+		$settings->set_smart_marks();
+		$settings->set_smart_ordinal_suffix();
+		$settings->set_smart_ordinal_suffix_match_roman_numerals(true);
+		$settings->set_smart_math();
+		$settings->set_smart_fractions();
+		$settings->set_smart_exponents();
+		$settings->set_smart_area_units();
+		// Smart spacing.
+		$settings->set_single_character_word_spacing();
+		$settings->set_fraction_spacing();
+		$settings->set_unit_spacing();
+		$settings->set_units();
+		$settings->set_dash_spacing();
+		$settings->set_dewidow();
+		$settings->set_max_dewidow_length();
+		$settings->set_max_dewidow_pull();
+		$settings->set_dewidow_word_number();
+		$settings->set_wrap_hard_hyphens();
+		$settings->set_url_wrap();
+		$settings->set_email_wrap();
+		$settings->set_min_after_url_wrap();
+		$settings->set_space_collapse();
+		// Character styling.
+		$settings->set_style_ampersands(false);
+		$settings->set_style_caps(false);
+		$settings->set_style_initial_quotes(false);
+		$settings->set_style_numbers(false);
+		$settings->set_style_hanging_punctuation(false);
+		$settings->set_initial_quote_tags();
+		// Hyphenation.
+		$settings->set_hyphenation(false);
 
-			$typo = new PHP_Typography();
-			$text = $typo->process($text, $settings);
+		$typo = new PHP_Typography();
+		$text = $typo->process($text, $settings);
 
+		if($strip === false)
+		{
 			$text = $this->removeStrongHeaders($text);
 			$text = $this->removeDashList($text);
 			$text = $this->removeEmptyParagraphs($text);

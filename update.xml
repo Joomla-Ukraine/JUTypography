@@ -21,6 +21,6 @@
         <targetplatform name="joomla"
                         version="4\.*|5\.*" />
         <php_minimum>8.1</php_minimum>
-        <sha256>f6873e49bc1f5198af5305f76e2959d9085baefac6f2a85affa29cf67733875e</sha256>
+        <sha256>4602320c68e1668a25bfd085dc1920950328c50fc5eac091110b1941cb849ef4</sha256>
     </update>
 </updates>

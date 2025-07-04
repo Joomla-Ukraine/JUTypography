@@ -21,7 +21,6 @@ of articles by automatically applying formatting rules after saving content.
 
 1. Fields: `title`, `metadesc`.
 2. Article components: `$article->text`, `$article->introtext`, `$article->fulltext`.
-3.
 
 **Typography Features**:
 

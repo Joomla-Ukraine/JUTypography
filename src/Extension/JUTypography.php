@@ -180,8 +180,33 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$lang     = Factory::getApplication()->getLanguage();
 			$settings = new Settings();
 
-			$settings->set_tags_to_ignore();
-			$settings->set_classes_to_ignore();
+			$settings->set_tags_to_ignore([
+				'hr',
+				'iframe',
+				'code',
+				'head',
+				'kbd',
+				'object',
+				'option',
+				'pre',
+				'samp',
+				'script',
+				'noscript',
+				'noembed',
+				'select',
+				'style',
+				'textarea',
+				'title',
+				'var',
+				'math'
+			]);
+
+			$settings->set_classes_to_ignore([
+				'system-pagebreak',
+				'vcard',
+				'noTypo'
+			]);
+
 			// Smart characters.
 			$settings->set_smart_quotes();
 			$settings->set_smart_quotes_primary('doubleGuillemets');

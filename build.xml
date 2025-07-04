@@ -3,7 +3,7 @@
          basedir=".">
 
     <property name="VERSION"
-              value="1.0.4" />
+              value="1.0.5" />
     <tstamp>
         <format property="DATE"
                 pattern="%d.%m.%Y" />

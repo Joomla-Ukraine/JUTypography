@@ -15,6 +15,7 @@ namespace JU\Plugin\Content\JUTypography\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use DOMDocument;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
@@ -49,12 +50,13 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$context = $event->getArgument('context');
 		$article = $event->getArgument('item');
 
-		if($context !== 'com_content.article' || empty($article->introtext))
+		if($context !== 'com_content.article')
 		{
 			return;
 		}
 
-		$article->title = $this->typography($article->title, true);
+		$article->title    = $this->typography($article->title, true);
+		$article->metadesc = $this->typography($article->metadesc, true);
 
 		if(isset($article->text))
 		{
@@ -71,7 +73,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$article->fulltext = $this->typography($article->fulltext);
 		}
 
-		$article->metadesc = $this->typography($article->metadesc, true);
+
 	}
 
 	/**
@@ -99,7 +101,9 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 				$text = $this->removeAttributesFromTags($text);
 			}
 
+			$lang     = Factory::getApplication()->getLanguage();
 			$settings = new Settings();
+
 			$settings->set_tags_to_ignore();
 			$settings->set_classes_to_ignore();
 			// Smart characters.
@@ -111,7 +115,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$settings->set_smart_dashes_style();
 			$settings->set_smart_ellipses();
 			$settings->set_smart_diacritics();
-			$settings->set_diacritic_language('uk-UA');
+			$settings->set_diacritic_language($lang->getTag());
 			$settings->set_diacritic_custom_replacements();
 			$settings->set_smart_marks();
 			$settings->set_smart_ordinal_suffix();

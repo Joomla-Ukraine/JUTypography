@@ -6,6 +6,8 @@
         <element>jutypography</element>
         <type>plugin</type>
         <version>1.0.4</version>
+        <client>site</client>
+        <folder>content</folder>
         <infourl title="Joomla! Ukraine">https://github.com/Joomla-Ukraine/JUTypography</infourl>
         <downloads>
             <downloadurl type="full"
@@ -16,8 +18,6 @@
         </tags>
         <maintainer>Denys Nosov</maintainer>
         <maintainerurl>https://joomla-ua.org</maintainerurl>
-        <section>Updates</section>
-        <client>site</client>
         <targetplatform name="joomla"
                         version="4\.*|5\.*" />
         <php_minimum>8.1</php_minimum>

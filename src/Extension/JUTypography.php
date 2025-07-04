@@ -47,6 +47,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 * @param \Joomla\Event\Event $event
 	 *
 	 * @return  void
+	 * @throws \Exception
 	 */
 	public function onContentBeforeSave(Event $event): void
 	{
@@ -58,8 +59,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			return;
 		}
 
-		$article->title    = $this->typography($article->title, true);
-		$article->metadesc = $this->typography($article->metadesc, true);
 		$article->title    = $this->content($article->title, true);
 		$article->metadesc = $this->content($article->metadesc, true);
 
@@ -77,8 +76,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		{
 			$article->fulltext = $this->content($article->fulltext);
 		}
-
-
 	}
 
 	/**
@@ -160,8 +157,9 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 * @param bool   $removeAttr
 	 *
 	 * @return string
+	 * @throws \Exception
 	 */
-	private function typography($text, bool $strip = false, bool $removeAttr = true): string
+	protected function typography($text, bool $strip = false, bool $removeAttr = true): string
 	{
 		if($strip === true)
 		{
@@ -239,12 +237,12 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	}
 
 	/**
-	 * @param          $html
+	 * @param          $text
 	 * @param string[] $tags
 	 *
 	 * @return string
 	 */
-	protected function removeAttributesFromTags($html, array $tags = [
+	protected function removeAttributesFromTags($text, array $tags = [
 		'h1',
 		'h2',
 		'h3',
@@ -262,7 +260,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		libxml_use_internal_errors(true);
 
 		$dom = new DOMDocument();
-		$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+		$dom->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8'));
 
 		foreach($tags as $tag)
 		{

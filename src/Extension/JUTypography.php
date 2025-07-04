@@ -26,6 +26,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 final class JUTypography extends CMSPlugin implements SubscriberInterface
 {
+	protected array $placeholders = [];
+	protected int $placeholderIndex = 0;
+
 	/**
 	 * Returns the event this subscriber will listen to.
 	 *
@@ -57,23 +60,98 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
 		$article->title    = $this->typography($article->title, true);
 		$article->metadesc = $this->typography($article->metadesc, true);
+		$article->title    = $this->content($article->title, true);
+		$article->metadesc = $this->content($article->metadesc, true);
 
 		if(isset($article->text))
 		{
-			$article->text = $this->typography($article->text);
+			$article->text = $this->content($article->text);
 		}
 
 		if(isset($article->introtext))
 		{
-			$article->introtext = $this->typography($article->introtext, false, false);
+			$article->introtext = $this->content($article->introtext, false, false);
 		}
 
 		if(isset($article->fulltext))
 		{
-			$article->fulltext = $this->typography($article->fulltext);
+			$article->fulltext = $this->content($article->fulltext);
 		}
 
 
+	}
+
+	/**
+	 * @param      $html
+	 * @param bool $strip
+	 * @param bool $removeAttr
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function content($html, bool $strip = false, bool $removeAttr = true): string
+	{
+		$html = $this->protectBlocks($html);
+
+		$html = $this->typography($html, $strip, $removeAttr);
+
+		return $this->restoreBlocks($html);
+	}
+
+	/**
+	 * @param        $text
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function protectBlocks($text): string
+	{
+		$text = preg_replace_callback('/\[(\w+)](.*?)\[\/\1]/si', function ($matches)
+		{
+			return $this->storePlaceholder($matches[ 0 ]);
+		}, $text);
+
+		$text = preg_replace_callback('/\{(\w+)}(.*?)\{\/\1}/si', function ($matches)
+		{
+			return $this->storePlaceholder($matches[ 0 ]);
+		}, $text);
+
+		$text = preg_replace_callback('/\{.*?\}/s', function ($matches)
+		{
+			return $this->storePlaceholder($matches[ 0 ]);
+		}, $text);
+
+		return $text;
+	}
+
+	/**
+	 * @param        $text
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function restoreBlocks($text): string
+	{
+		foreach($this->placeholders as $key => $original)
+		{
+			$text = str_replace($key, $original, $text);
+		}
+
+		return $text;
+	}
+
+	/**
+	 * @param        $text
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function storePlaceholder($text): string
+	{
+		$key                        = '__PLACEHOLDER_' . $this->placeholderIndex++ . '__';
+		$this->placeholders[ $key ] = $text;
+
+		return $key;
 	}
 
 	/**

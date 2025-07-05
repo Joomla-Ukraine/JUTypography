@@ -159,21 +159,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function typography($text, bool $strip = false): string
 	{
-		if($strip === true)
-		{
-			$text = strip_tags($text);
-		}
-
-		if($strip === false)
-		{
-			if(stripos($text, '<p') === false)
-			{
-				$text = $this->autoParagraphs($text);
-			}
-
-			$text = $this->removeAttributesFromTags($text);
-		}
-
 		$lang     = Factory::getApplication()->getLanguage();
 		$settings = new Settings();
 
@@ -250,8 +235,21 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$typo = new PHP_Typography();
 		$text = $typo->process($text, $settings);
 
+		if($strip === true)
+		{
+			$text = strip_tags($text);
+			$text = html_entity_decode($text);
+		}
+
 		if($strip === false)
 		{
+			if(stripos($text, '<p') === false)
+			{
+				$text = $this->autoParagraphs($text);
+			}
+
+			$text = $this->removeAttributesFromTags($text);
+
 			$text = $this->removeStrongHeaders($text);
 			$text = $this->removeDashList($text);
 			$text = $this->removeEmptyParagraphs($text);

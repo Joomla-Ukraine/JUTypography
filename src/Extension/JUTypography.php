@@ -245,11 +245,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
 		if($strip === false)
 		{
-			if(stripos($text, '<p') === false)
-			{
-				$text = $this->autoParagraphs($text);
-			}
-
 			$text = $this->removeAttributesFromTags($text);
 			$text = $this->removeStrongHeaders($text);
 			$text = $this->removeDashList($text);
@@ -307,6 +302,11 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		'td',
 	]): string
 	{
+		if(empty($text))
+		{
+			return $text;
+		}
+
 		libxml_use_internal_errors(true);
 
 		$dom = new DOMDocument();
@@ -352,6 +352,11 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function removeStrongHeaders($text): string
 	{
+		if(empty($text))
+		{
+			return $text;
+		}
+		
 		libxml_use_internal_errors(true);
 
 		$dom = new DOMDocument();
@@ -397,23 +402,5 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	protected function removeEmptyParagraphs($text): string
 	{
 		return preg_replace('~<p[^>]*>(?:\s|&nbsp;|&#160;| |&thinsp;|&ensp;|&emsp;|&ZeroWidthSpace;|&#8203;|&#xfeff;)*</p>~iu', '', $text);
-	}
-
-	/**
-	 * @param        $text
-	 *
-	 * @return string
-	 */
-	protected function autoParagraphs($text): string
-	{
-		$text       = trim($text);
-		$paragraphs = preg_split('/\R{2,}/u', $text);
-
-		foreach($paragraphs as &$p)
-		{
-			$p = '<p>' . nl2br(trim($p)) . '</p>';
-		}
-
-		return implode("\n", $paragraphs);
 	}
 }

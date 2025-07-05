@@ -2,16 +2,16 @@
 <updates>
     <update>
         <name>JUTypography</name>
-        <description><![CDATA[JUTypography - Content plugin for typography article after save<br />Update to JUTypography 1.0.8 now!<br /><span style="font-size: 85%;">2025 &copy; Joomla! Ukraine. All rights reserved!</span>]]></description>
+        <description><![CDATA[JUTypography - Content plugin for typography article after save<br />Update to JUTypography 1.0.9 now!<br /><span style="font-size: 85%;">2025 &copy; Joomla! Ukraine. All rights reserved!</span>]]></description>
         <element>jutypography</element>
         <type>plugin</type>
-        <version>1.0.8</version>
+        <version>1.0.9</version>
         <client>site</client>
         <folder>content</folder>
         <infourl title="Joomla! Ukraine">https://github.com/Joomla-Ukraine/JUTypography</infourl>
         <downloads>
             <downloadurl type="full"
-                         format="zip">https://github.com/Joomla-Ukraine/JUTypography/releases/download/1.0.8/plg_content_jutypography_v1.0.8.zip</downloadurl>
+                         format="zip">https://github.com/Joomla-Ukraine/JUTypography/releases/download/1.0.9/plg_content_jutypography_v1.0.9.zip</downloadurl>
         </downloads>
         <tags>
             <tag>stable</tag>
@@ -21,6 +21,6 @@
         <targetplatform name="joomla"
                         version="4\.*|5\.*" />
         <php_minimum>8.1</php_minimum>
-        <sha256>96be3cff99d149f43945c98f0b08d546070a987344718666b1fc8563809a36c7</sha256>
+        <sha256>35e9a156b91893a1df15fc49c4bfd6381dc6769ec1264010e8948cfd901a65ed</sha256>
     </update>
 </updates>

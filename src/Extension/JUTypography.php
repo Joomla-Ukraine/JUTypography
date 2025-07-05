@@ -235,6 +235,8 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$typo = new PHP_Typography();
 		$text = $typo->process($text, $settings);
 
+		$text = $this->proofs($text);
+
 		if($strip === true)
 		{
 			$text = strip_tags($text);
@@ -249,11 +251,37 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			}
 
 			$text = $this->removeAttributesFromTags($text);
-
 			$text = $this->removeStrongHeaders($text);
 			$text = $this->removeDashList($text);
 			$text = $this->removeEmptyParagraphs($text);
 		}
+
+		return $text;
+	}
+
+	/**
+	 * @param          $text
+	 *
+	 * @return string
+	 */
+	protected function proofs($text)
+	{
+		$text = preg_replace('/(^|<p>|<br>|<br \/>)\s*- /u', '\\1— ', $text);
+
+		$text = str_replace([
+			'кв. м.',
+			'кв.м.',
+			'грн.',
+		], [
+			'м²',
+			'м²',
+			'грн',
+		], $text);
+
+		$text = preg_replace('/(№|§) ?(?=\d)/u', '\\1 ', $text);
+		$text = preg_replace('/№ №/u', '№№', $text);
+		$text = preg_replace('/§ §/u', '§§', $text);
+		$text = preg_replace('/ -(?=\d)/u', ' &minus;', $text);
 
 		return $text;
 	}

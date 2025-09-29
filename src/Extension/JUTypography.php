@@ -245,7 +245,53 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
 		if($strip === false)
 		{
-			$text = $this->removeAttributesFromTags($text);
+			$p = [];
+			if($this->params->get('p', 0) == 1)
+			{
+				$p = [ 'p' ];
+			}
+
+			$headdings = [];
+			if($this->params->get('headdings', 0) == 1)
+			{
+				$headdings = [
+					'h1',
+					'h2',
+					'h3',
+					'h4',
+					'h5',
+					'h6',
+				];
+			}
+
+			$div = [];
+			if($this->params->get('div', 0) == 1)
+			{
+				$div = [ 'div' ];
+			}
+
+			$span = [];
+			if($this->params->get('span', 0) == 1)
+			{
+				$span = [ 'span' ];
+			}
+
+			$table = [];
+			if($this->params->get('table', 0) == 1)
+			{
+				$table = [
+					'table',
+					'thead',
+					'tbody',
+					'tr',
+					'th',
+					'td'
+				];
+			}
+
+			$tags = array_merge($p, $headdings, $div, $span, $table);
+			$text = $this->removeAttributesFromTags($text, $tags);
+
 			$text = $this->removeStrongHeaders($text);
 			$text = $this->removeDashList($text);
 			$text = $this->removeEmptyParagraphs($text);
@@ -356,7 +402,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		{
 			return $text;
 		}
-		
+
 		libxml_use_internal_errors(true);
 
 		$dom = new DOMDocument();
@@ -373,12 +419,14 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 				{
 					$strongs[] = $strong;
 				}
+
 				foreach($strongs as $strong)
 				{
 					while($strong->firstChild)
 					{
 						$strong->parentNode->insertBefore($strong->firstChild, $strong);
 					}
+
 					$strong->parentNode->removeChild($strong);
 				}
 			}

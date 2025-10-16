@@ -62,11 +62,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$article->title    = $this->typography($article->title, true);
 		$article->metadesc = $this->typography($article->metadesc, true);
 
-		if(isset($article->text))
-		{
-			$article->text = $this->content($article->text, false);
-		}
-
 		if(isset($article->introtext))
 		{
 			$article->introtext = $this->content($article->introtext, false);
@@ -75,6 +70,11 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		if(isset($article->fulltext))
 		{
 			$article->fulltext = $this->content($article->fulltext, false);
+		}
+
+		if(isset($article->text))
+		{
+			$article->text = $this->content($article->text, false);
 		}
 	}
 
@@ -192,7 +192,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		// Smart characters.
 		$settings->set_smart_quotes();
 		$settings->set_smart_quotes_primary('doubleGuillemets');
-		$settings->set_smart_quotes_secondary();
+		$settings->set_smart_quotes_secondary('doubleGuillemets');
 		$settings->set_smart_quotes_exceptions();
 		$settings->set_smart_dashes();
 		$settings->set_smart_dashes_style();
@@ -207,6 +207,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$settings->set_smart_fractions();
 		$settings->set_smart_exponents();
 		$settings->set_smart_area_units();
+
 		// Smart spacing.
 		$settings->set_single_character_word_spacing();
 		$settings->set_fraction_spacing();
@@ -222,6 +223,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$settings->set_email_wrap();
 		$settings->set_min_after_url_wrap();
 		$settings->set_space_collapse();
+
 		// Character styling.
 		$settings->set_style_ampersands(false);
 		$settings->set_style_caps(false);
@@ -229,12 +231,12 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$settings->set_style_numbers(false);
 		$settings->set_style_hanging_punctuation(false);
 		$settings->set_initial_quote_tags();
+
 		// Hyphenation.
 		$settings->set_hyphenation(false);
 
 		$typo = new PHP_Typography();
 		$text = $typo->process($text, $settings);
-
 		$text = $this->proofs($text);
 
 		if($strip === true)
@@ -305,7 +307,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @return string
 	 */
-	protected function proofs($text)
+	protected function proofs($text): string
 	{
 		$text = preg_replace('/(^|<p>|<br>|<br \/>)\s*- /u', '\\1— ', $text);
 
@@ -323,6 +325,11 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$text = preg_replace('/№ №/u', '№№', $text);
 		$text = preg_replace('/§ §/u', '§§', $text);
 		$text = preg_replace('/ -(?=\d)/u', ' &minus;', $text);
+		$text = str_replace([
+			'<p>&nbsp;</p>',
+			'<p> </p>',
+			'<p></p>'
+		], '', $text);
 
 		return $text;
 	}

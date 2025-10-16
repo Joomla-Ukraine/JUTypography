@@ -3,7 +3,7 @@
         'name' => 'ju/jutypography',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '8fc6496e80654b7a7851f70110e35bbbc7c3f945',
+        'reference' => '173accdfd820350e25fbb9bf4008c8e71e57c459',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'ju/jutypography' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '8fc6496e80654b7a7851f70110e35bbbc7c3f945',
+            'reference' => '173accdfd820350e25fbb9bf4008c8e71e57c459',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

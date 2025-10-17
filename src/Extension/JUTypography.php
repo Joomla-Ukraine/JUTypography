@@ -89,7 +89,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	{
 		$html = $this->protectBlocks($html);
 
-		if(strpos($html, '<table') !== false && $this->params->get('fixtable') == 1)
+		if(strpos($html, '<table') !== false && $this->params->get('fixtable', 1) == 1)
 		{
 			$html = $this->fixTableStructure($html);
 		}

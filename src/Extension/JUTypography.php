@@ -89,6 +89,11 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	{
 		$html = $this->protectBlocks($html);
 
+		if(strpos($html, '<table') !== false && $this->params->get('fixtable') == 1)
+		{
+			$html = $this->fixTableStructure($html);
+		}
+
 		$html = $this->typography($html, $strip);
 
 		return $this->restoreBlocks($html);
@@ -332,6 +337,82 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		], '', $text);
 
 		return $text;
+	}
+
+	protected function fixTableStructure($html)
+	{
+		$dom = new \DOMDocument();
+
+		libxml_use_internal_errors(true);
+		$dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+		libxml_clear_errors();
+
+		$tables = $dom->getElementsByTagName('table');
+		foreach($tables as $table)
+		{
+			$thead = $table->getElementsByTagName('thead')->item(0);
+			if($thead)
+			{
+				continue;
+			}
+
+			$firstTr = $table->getElementsByTagName('tr')->item(0);
+			if(!$firstTr)
+			{
+				continue;
+			}
+
+			$thead = $dom->createElement('thead');
+			$table->insertBefore($thead, $firstTr->parentNode);
+
+			$thead->appendChild($firstTr);
+
+			$strongTags = $thead->getElementsByTagName('strong');
+			while($strongTags->length > 0)
+			{
+				$strong   = $strongTags->item(0);
+				$textNode = $dom->createTextNode($strong->textContent);
+				$strong->parentNode->replaceChild($textNode, $strong);
+			}
+
+			$tdTags = $thead->getElementsByTagName('td');
+			while($tdTags->length > 0)
+			{
+				$td = $tdTags->item(0);
+				$th = $dom->createElement('th');
+				while($td->hasChildNodes())
+				{
+					$th->appendChild($td->firstChild);
+				}
+
+				foreach($td->attributes as $attr)
+				{
+					$th->setAttribute($attr->name, $attr->value);
+				}
+
+				$td->parentNode->replaceChild($th, $td);
+			}
+
+			$tbody = $table->getElementsByTagName('tbody')->item(0);
+			if(!$tbody)
+			{
+				$tbody = $dom->createElement('tbody');
+				$table->insertBefore($tbody, $thead->nextSibling);
+			}
+
+			$trNodes = $table->getElementsByTagName('tr');
+			$trCount = $trNodes->length;
+			for($i = 0; $i < $trCount; $i++)
+			{
+				$tr = $trNodes->item(0);
+				if($tr->parentNode !== $thead && $tr->parentNode !== $tbody)
+				{
+					$tbody->appendChild($tr);
+				}
+			}
+		}
+
+		return $dom->saveHTML();
 	}
 
 	/**

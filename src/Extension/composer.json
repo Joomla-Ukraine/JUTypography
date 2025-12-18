@@ -1,13 +1,36 @@
 {
-    "name": "ju/jutypography",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Denys",
-            "email": "denys@joomla-ua.org"
-        }
-    ],
-    "require": {
-        "mundschenk-at/php-typography": "^6.7"
+  "name": "ju/jutypography",
+  "homepage": "https://joomla-ua.org",
+  "type": "library",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Denys",
+      "email": "denys@joomla-ua.org",
+      "homepage": "https://joomla-ua.org",
+      "role": "Developer"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "JUTypography\\": "src/"
+    }
+  },
+  "minimum-stability": "stable",
+  "config": {
+    "optimize-autoloader": true,
+    "use-include-path": false,
+    "prepend-autoloader": true,
+    "prefer-dist": true,
+    "no-dev": true,
+    "sort-packages": true,
+    "archive-format": "zip",
+    "platform": {
+      "php": "8.1"
+    }
+  },
+  "prefer-stable": true,
+  "require": {
+    "php": ">=8.1"
+  }
 }

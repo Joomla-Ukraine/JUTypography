@@ -15,12 +15,10 @@ namespace JU\Plugin\Content\JUTypography\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use DOMDocument;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
-use PHP_Typography\PHP_Typography;
-use PHP_Typography\Settings;
+use JUTypography\Typograf;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -164,85 +162,10 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function typography($text, bool $strip = false): string
 	{
-		$lang     = Factory::getApplication()->getLanguage();
-		$settings = new Settings();
+		$typo = new Typograf();
+		$typo->enableRule('*');
 
-		$settings->set_tags_to_ignore([
-			'hr',
-			'iframe',
-			'code',
-			'head',
-			'kbd',
-			'object',
-			'option',
-			'pre',
-			'samp',
-			'script',
-			'noscript',
-			'noembed',
-			'select',
-			'style',
-			'textarea',
-			'title',
-			'var',
-			'math'
-		]);
-
-		$settings->set_classes_to_ignore([
-			'system-pagebreak',
-			'vcard',
-			'noTypo'
-		]);
-
-		// Smart characters.
-		$settings->set_smart_quotes();
-		$settings->set_smart_quotes_primary('doubleGuillemets');
-		$settings->set_smart_quotes_secondary('doubleGuillemets');
-		$settings->set_smart_quotes_exceptions();
-		$settings->set_smart_dashes();
-		$settings->set_smart_dashes_style();
-		$settings->set_smart_ellipses();
-		$settings->set_smart_diacritics();
-		$settings->set_diacritic_language($lang->getTag());
-		$settings->set_diacritic_custom_replacements();
-		$settings->set_smart_marks();
-		$settings->set_smart_ordinal_suffix();
-		$settings->set_smart_ordinal_suffix_match_roman_numerals(true);
-		$settings->set_smart_math();
-		$settings->set_smart_fractions();
-		$settings->set_smart_exponents();
-		$settings->set_smart_area_units();
-
-		// Smart spacing.
-		$settings->set_single_character_word_spacing();
-		$settings->set_fraction_spacing();
-		$settings->set_unit_spacing();
-		$settings->set_units();
-		$settings->set_dash_spacing();
-		$settings->set_dewidow();
-		$settings->set_max_dewidow_length();
-		$settings->set_max_dewidow_pull();
-		$settings->set_dewidow_word_number();
-		$settings->set_wrap_hard_hyphens();
-		$settings->set_url_wrap();
-		$settings->set_email_wrap();
-		$settings->set_min_after_url_wrap();
-		$settings->set_space_collapse();
-
-		// Character styling.
-		$settings->set_style_ampersands(false);
-		$settings->set_style_caps(false);
-		$settings->set_style_initial_quotes(false);
-		$settings->set_style_numbers(false);
-		$settings->set_style_hanging_punctuation(false);
-		$settings->set_initial_quote_tags();
-
-		// Hyphenation.
-		$settings->set_hyphenation(false);
-
-		$typo = new PHP_Typography();
-		$text = $typo->process($text, $settings);
-		$text = $this->proofs($text);
+		$text = $typo->apply($text);
 
 		if($strip === true)
 		{
@@ -303,38 +226,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 			$text = $this->removeDashList($text);
 			$text = $this->removeEmptyParagraphs($text);
 		}
-
-		return $text;
-	}
-
-	/**
-	 * @param          $text
-	 *
-	 * @return string
-	 */
-	protected function proofs($text): string
-	{
-		$text = preg_replace('/(^|<p>|<br>|<br \/>)\s*- /u', '\\1— ', $text);
-
-		$text = str_replace([
-			'кв. м.',
-			'кв.м.',
-			'грн.',
-		], [
-			'м²',
-			'м²',
-			'грн',
-		], $text);
-
-		$text = preg_replace('/(№|§) ?(?=\d)/u', '\\1 ', $text);
-		$text = preg_replace('/№ №/u', '№№', $text);
-		$text = preg_replace('/§ §/u', '§§', $text);
-		$text = preg_replace('/ -(?=\d)/u', ' &minus;', $text);
-		$text = str_replace([
-			'<p>&nbsp;</p>',
-			'<p> </p>',
-			'<p></p>'
-		], '', $text);
 
 		return $text;
 	}

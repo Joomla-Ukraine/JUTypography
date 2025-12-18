@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
+    'JUTypography\\' => array($baseDir . '/src'),
 );

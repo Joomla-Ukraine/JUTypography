@@ -94,7 +94,12 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
 		$html = $this->typography($html, $strip);
 
-		return $this->restoreBlocks($html);
+		$html = $this->restoreBlocks($html);
+
+		$html = preg_replace('/^<\?xml[^>]*\?>\s*/i', '', $html);
+		$html = str_replace('<p><?xml encoding="UTF-8"></p>', '', $html);
+
+		return $html;
 	}
 
 	/**

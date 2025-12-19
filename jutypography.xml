@@ -12,6 +12,7 @@
     <version>@version@</version>
     <description>PLG_CONTENT_JUTYPOGRAPHY_DESCRIPTION</description>
     <namespace path="src">JU\Plugin\Content\JUTypography</namespace>
+	<scriptfile>script.php</scriptfile>
 
     <update>https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</update>
     <updateservers>
@@ -28,6 +29,7 @@
     <files>
         <folder plugin="jutypography">services</folder>
         <folder>src</folder>
+	    <filename>script.php</filename>
     </files>
 
 	<config>

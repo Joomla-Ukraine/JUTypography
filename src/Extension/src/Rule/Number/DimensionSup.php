@@ -17,9 +17,30 @@ class DimensionSup extends AbstractRule
 
 	public function handler(string $text): string
 	{
-		$pattern = '#(м|мм|см|дм|км|гм|m|km|dm|cm|mm)([\d]{1,3})([^' . $this->char[ 'char' ] . '0-9]|$)#iu';
-		$replace = '$1<sup>$2</sup>$3';
+		$superscriptMap = [
+			'0' => '⁰',
+			'1' => '¹',
+			'2' => '²',
+			'3' => '³',
+			'4' => '⁴',
+			'5' => '⁵',
+			'6' => '⁶',
+			'7' => '⁷',
+			'8' => '⁸',
+			'9' => '⁹',
+		];
 
-		return preg_replace($pattern, $replace, $text);
+		$pattern = '#(м|мм|см|дм|км|гм|m|km|dm|cm|mm)([\d]{1,3})([^' . $this->char[ 'char' ] . '0-9]|$)#iu';
+
+		return preg_replace_callback($pattern, function ($matches) use ($superscriptMap)
+		{
+			$unit  = $matches[ 1 ];
+			$power = $matches[ 2 ];
+			$after = $matches[ 3 ];
+
+			$superPower = strtr($power, $superscriptMap);
+
+			return $unit . $superPower . $after;
+		}, $text);
 	}
 }

@@ -42,7 +42,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Returns the command class for the JUTypography plugin.
 	 *
-	 * @param \Joomla\Event\Event $event
+	 * @param   \Joomla\Event\Event  $event
 	 *
 	 * @return  void
 	 * @throws \Exception
@@ -159,8 +159,8 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	}
 
 	/**
-	 * @param        $text
-	 * @param bool   $strip
+	 * @param         $text
+	 * @param   bool  $strip
 	 *
 	 * @return string
 	 * @throws \Exception
@@ -313,8 +313,8 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 	}
 
 	/**
-	 * @param          $text
-	 * @param string[] $tags
+	 * @param             $text
+	 * @param   string[]  $tags
 	 *
 	 * @return string
 	 */

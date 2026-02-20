@@ -171,6 +171,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		$typo->enableRule('*');
 
 		$text = $typo->apply($text);
+		$text = str_replace([ '  ', '  ' ], ' ', $text);
 
 		if($strip === true)
 		{

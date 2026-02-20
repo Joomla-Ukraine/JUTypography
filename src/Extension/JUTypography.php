@@ -175,7 +175,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 		if($strip === true)
 		{
 			$text = strip_tags($text);
-			$text = html_entity_decode($text);
+			$text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 		}
 
 		if($strip === false)

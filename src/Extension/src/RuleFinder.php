@@ -9,6 +9,8 @@
 
 namespace JUTypography;
 
+use FilesystemIterator;
+use JUTypography\Rule\AbstractRule;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -32,6 +34,7 @@ class RuleFinder
 			$baseClass = new ReflectionClass('JUTypography\Rule\AbstractRule');
 
 			$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . DIRECTORY_SEPARATOR . 'Rule', RecursiveDirectoryIterator::SKIP_DOTS));
+                    FilesystemIterator::SKIP_DOTS
 
 			foreach($files as $file)
 			{

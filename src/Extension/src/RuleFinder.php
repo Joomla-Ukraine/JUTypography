@@ -33,8 +33,12 @@ class RuleFinder
 		{
 			$baseClass = new ReflectionClass('JUTypography\Rule\AbstractRule');
 
-			$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . DIRECTORY_SEPARATOR . 'Rule', RecursiveDirectoryIterator::SKIP_DOTS));
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    __DIR__.DIRECTORY_SEPARATOR.'Rule',
                     FilesystemIterator::SKIP_DOTS
+                )
+            );
 
 			foreach($files as $file)
 			{
@@ -53,13 +57,12 @@ class RuleFinder
 		return static::$rules;
 	}
 
-	protected static function getClassNameByFilePath(string $path): string
-	{
-		$class = str_replace([ __DIR__, '.php' ], [
-			'JUTypography',
-			''
-		], $path);
-
-		return str_replace('/', '\\', $class);
-	}
+    protected static function getClassNameByFilePath(string $path): string
+    {
+        return str_replace(
+            [__DIR__, '.php', '/'],
+            ['JUTypography', '', '\\'],
+            $path
+        );
+    }
 }

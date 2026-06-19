@@ -12,92 +12,103 @@
     <version>@version@</version>
     <description>PLG_CONTENT_JUTYPOGRAPHY_DESCRIPTION</description>
     <namespace path="src">JU\Plugin\Content\JUTypography</namespace>
-	<scriptfile>script.php</scriptfile>
+    <scriptfile>script.php</scriptfile>
 
     <update>https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</update>
     <updateservers>
         <server type="extension"
                 priority="1"
-                name="JUTypography">https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml</server>
+                name="JUTypography">
+            https://raw.githubusercontent.com/Joomla-Ukraine/JUTypography/refs/heads/main/update.xml
+        </server>
     </updateservers>
 
     <languages folder="language">
-		<language tag="en-GB">en-GB/plg_content_jutypography.ini</language>
-		<language tag="en-GB">en-GB/plg_content_jutypography.sys.ini</language>
-	</languages>
+        <language tag="en-GB">en-GB/plg_content_jutypography.ini</language>
+        <language tag="en-GB">en-GB/plg_content_jutypography.sys.ini</language>
+    </languages>
 
     <files>
         <folder plugin="jutypography">services</folder>
         <folder>src</folder>
-	    <filename>script.php</filename>
+        <filename>script.php</filename>
     </files>
 
-	<config>
+    <config>
         <fields name="params">
 
-			<fieldset name="REMOVE_ATTR_FROM_TAGS">
+            <fieldset name="REMOVE_ATTR_FROM_TAGS">
 
-	                <field name="p"
-	                       type="radio"
-	                       layout="joomla.form.field.radio.switcher"
-	                       default="1"
-	                       label="PLG_CONTENT_JUTYPOGRAPHY_P">
-	                    <option value="0">JNO</option>
-	                    <option value="1">JYES</option>
-	                </field>
+                <field name="p"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_P">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
-					<field name="headings"
-					       type="radio"
-					       layout="joomla.form.field.radio.switcher"
-					       default="1"
-					       label="PLG_CONTENT_JUTYPOGRAPHY_HEADINGS">
-	                    <option value="0">JNO</option>
-	                    <option value="1">JYES</option>
-	                </field>
+                <field name="headings"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_HEADINGS">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
-					<field name="div"
-					       type="radio"
-					       layout="joomla.form.field.radio.switcher"
-					       default="1"
-					       label="PLG_CONTENT_JUTYPOGRAPHY_DIV">
-	                    <option value="0">JNO</option>
-	                    <option value="1">JYES</option>
-	                </field>
+                <field name="div"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_DIV">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
-					<field name="span"
-					       type="radio"
-					       layout="joomla.form.field.radio.switcher"
-					       default="1"
-					       label="PLG_CONTENT_JUTYPOGRAPHY_SPAN">
-	                    <option value="0">JNO</option>
-	                    <option value="1">JYES</option>
-	                </field>
+                <field name="span"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_SPAN">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
-					<field name="table"
-					       type="radio"
-					       layout="joomla.form.field.radio.switcher"
-					       default="1"
-					       label="PLG_CONTENT_JUTYPOGRAPHY_TABLE">
-	                    <option value="0">JNO</option>
-	                    <option value="1">JYES</option>
-	                </field>
+                <field name="style"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_STYLE">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
-	        </fieldset>
+                <field name="table"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_TABLE">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
-	        <fieldset name="FIXES">
+            </fieldset>
 
-					<field name="fixtable"
-					       type="radio"
-					       layout="joomla.form.field.radio.switcher"
-					       default="1"
-					       label="PLG_CONTENT_JUTYPOGRAPHY_FIXTABLE">
-	                    <option value="0">JNO</option>
-	                    <option value="1">JYES</option>
-	                </field>
+            <fieldset name="FIXES">
 
-	        </fieldset>
+                <field name="fixtable"
+                       type="radio"
+                       layout="joomla.form.field.radio.switcher"
+                       default="1"
+                       label="PLG_CONTENT_JUTYPOGRAPHY_FIXTABLE">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+            </fieldset>
 
         </fields>
-	</config>
+    </config>
 
 </extension>

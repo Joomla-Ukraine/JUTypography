@@ -221,6 +221,10 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             $text = $this->removeStrongHeaders($text);
             $text = $this->removeDashList($text);
             $text = $this->removeEmptyParagraphs($text);
+
+            if ($this->params->get('style', 0) == 1) {
+                $text = $this->removeStyles($text);
+            }
         }
 
         return $text;

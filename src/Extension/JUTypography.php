@@ -234,6 +234,45 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
      * @param $html
      *
      * @return false|string
+     */
+    protected function removeStyles($html)
+    {
+        $dom = new DOMDocument();
+
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(
+            '<?xml encoding="UTF-8">'.$html,
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        );
+        libxml_clear_errors();
+
+        $elements = $dom->getElementsByTagName('*');
+
+        foreach ($elements as $element) {
+            if ($element->hasAttribute('style')) {
+                $style_attribute_value = $element->getAttribute('style');
+
+                if (preg_match('/text-align:\s*(.*?)(;|$)/i', $style_attribute_value, $matches)) {
+                    $align_value = trim($matches[1]);
+
+                    if (stripos($align_value, 'justify') !== false) {
+                        $element->removeAttribute('style');
+                    } else {
+                        $element->setAttribute('style', 'text-align: '.$align_value.';');
+                    }
+                } else {
+                    $element->removeAttribute('style');
+                }
+            }
+        }
+
+        return $dom->saveHTML();
+    }
+
+    /**
+     * @param $html
+     *
+     * @return false|string
      *
      * @throws \DOMException
      */

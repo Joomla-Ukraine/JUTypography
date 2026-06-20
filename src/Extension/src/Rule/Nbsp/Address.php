@@ -13,14 +13,14 @@ use JUTypography\Rule\AbstractRule;
 
 class Address extends AbstractRule
 {
-    public string $name = 'Неразрывной пробел а адресах г. ул. кв.';
+    public string $name = 'Нерозривний пробіл в адресах: м., вул., кв.';
 
     protected int $sort = 450;
 
     public function handler(string $text): string
     {
         $pattern = [
-            '#(^|\s|>)(г|обл|р-н|вул|пров|пер|пр|просп|пл|наб|ш|туп|оф|к|комн?|буд|корп|кв|пов|эт|мкр|стр)\.\s+(\S)#iu',
+            '#(^|\s|>)(м|обл|р-н|вул|пров|пер|пр|просп|пл|наб|ш|туп|оф|к|комн?|буд|корп|кв|пов|мкр|стр)\.\s+(\S)#iu',
             '#(^|\s|>)(будинок|корпус|квартира|поверх|офіс)\s+(\S)#iu',
         ];
 

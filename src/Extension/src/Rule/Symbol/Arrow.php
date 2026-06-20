@@ -13,7 +13,7 @@ use JUTypography\Rule\AbstractRule;
 
 class Arrow extends AbstractRule
 {
-    public string $name = 'Arrow -> → →, <- → ←';
+    public string $name = 'Arrow -> →, <- ←';
 
     public function handler(string $text): string
     {

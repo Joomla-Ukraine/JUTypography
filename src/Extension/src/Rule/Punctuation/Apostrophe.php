@@ -3,7 +3,7 @@
  * @package     JU.Plugin
  * @subpackage  Content.JUTypography
  *
- * @copyright   Copyright (C) 2025 Denes Nosov.
+ * @copyright   Copyright (C) 2025-2026 Denys Nosov
  * @license     GNU General Public License version 3 or later.
  */
 

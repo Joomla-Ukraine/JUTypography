@@ -3,7 +3,7 @@
  * @package     JU.Plugin
  * @subpackage  Content.JUTypography
  *
- * @copyright   Copyright (C) 2025 Denes Nosov.
+ * @copyright   Copyright (C) 2025-2026 Denys Nosov
  * @license     GNU General Public License version 3 or later.
  */
 
@@ -14,12 +14,12 @@ class SafeBlock
     /**
      * @var string[][]
      */
-    protected array $safeBlocks = [];
+    protected $safeBlocks = [];
 
     /**
      * @var string[]
      */
-    protected array $defaultSafeTags = [
+    protected $defaultSafeTags = [
         'head',
         'pre',
         'code',
@@ -30,7 +30,7 @@ class SafeBlock
     /**
      * @var string[]
      */
-    protected array $defaultSafeRegexp = [
+    protected $defaultSafeRegexp = [
         '/<!--(.+?)-->/ius',
         '/\[[a-z]([^]]+)]/ius',
         '/<span class=["\']no-typo["\']>(.+?)<\/span>/ius',
@@ -38,9 +38,9 @@ class SafeBlock
     ];
 
     /**
-     * @var array
+     * @var mixed[]
      */
-    private array $memory = [];
+    private $memory = [];
 
     public function __construct()
     {
@@ -53,6 +53,9 @@ class SafeBlock
         }
     }
 
+    /**
+     * @param string $tag
+     */
     public function addTag(string $tag): void
     {
         $res = [];
@@ -65,6 +68,9 @@ class SafeBlock
         $this->addBlock($res);
     }
 
+    /**
+     * @param string $pattern
+     */
     public function addRegExp(string $pattern): void
     {
         $this->addBlock([
@@ -72,6 +78,11 @@ class SafeBlock
         ]);
     }
 
+    /**
+     * @param string $text
+     *
+     * @return string
+     */
     public function on(string $text): string
     {
         $this->memory = [];
@@ -80,58 +91,75 @@ class SafeBlock
         return $this->safeTagAttr($text);
     }
 
-    public function safeBlockContent(string $text, bool $back = false): string
-    {
+    /**
+     * @param string $text
+     * @param bool $back
+     *
+     * @return string
+     */
+    public function safeBlockContent(
+        string $text,
+        bool $back = false
+    ): string {
         $key = 'bc';
         $i = false === $back ? 1 : count($this->memory[$key] ?? []);
-        $blocks = false === $back ? $this->safeBlocks : array_reverse(
-            $this->safeBlocks
-        );
+        $blocks = false === $back ? $this->safeBlocks : array_reverse($this->safeBlocks);
 
         foreach ($blocks as $block) {
-            $text = preg_replace_callback(
-                $block['pattern'],
-                function ($matches) use (&$i, $key, $back) {
-                    $safeContent = match ($back) {
-                        true => $this->unSafe($matches[1]),
-                        default => $this->safe($key, $i, $matches[1]),
-                    };
+            $text = preg_replace_callback($block['pattern'], function ($matches) use (&$i, $key, $back) {
+                switch ($back) {
+                    case true:
+                        $safeContent = $this->unSafe($matches[1]);
 
-                    false === $back ? ++$i : $i--;
+                        break;
 
-                    return str_replace(
-                        $matches[1],
-                        $safeContent,
-                        $matches[0]
-                    );
-                },
-                $text
-            );
+                    default:
+                        $safeContent = $this->safe($key, $i, $matches[1]);
+                }
+
+                false === $back ? ++$i : $i--;
+
+                return str_replace($matches[1], $safeContent, $matches[0]);
+            }, $text);
         }
 
         return $text;
     }
 
-    public function safeTagAttr(string $text, bool $back = false): string
-    {
+    /**
+     * @param string $text
+     * @param bool $back
+     *
+     * @return string
+     */
+    public function safeTagAttr(
+        string $text,
+        bool $back = false
+    ): string {
         $i = 1;
 
-        return preg_replace_callback(
-            '/<[^\/]([^>]+)>/ius',
-            function ($matches) use (&$i, $back) {
-                $safeContent = match ($back) {
-                    true => $this->unSafe($matches[1]),
-                    default => $this->safe('tag', $i, $matches[1]),
-                };
+        return preg_replace_callback('/<[^\/]([^>]+)>/ius', function ($matches) use (&$i, $back) {
+            switch ($back) {
+                case true:
+                    $safeContent = $this->unSafe($matches[1]);
 
-                ++$i;
+                    break;
 
-                return str_replace($matches[1], $safeContent, $matches[0]);
-            },
-            $text
-        );
+                default:
+                    $safeContent = $this->safe('tag', $i, $matches[1]);
+            }
+
+            ++$i;
+
+            return str_replace($matches[1], $safeContent, $matches[0]);
+        }, $text);
     }
 
+    /**
+     * @param string $text
+     *
+     * @return string
+     */
     public function off(string $text): string
     {
         $text = $this->safeTagAttr($text, true);
@@ -155,13 +183,28 @@ class SafeBlock
         return '/'.$arBlock['open'].'(.*?)'.$arBlock['close'].'/ius';
     }
 
-    private function safe(string $key, int $i, string $text): string
-    {
+    /**
+     * @param string $key
+     * @param int $i
+     * @param string $text
+     *
+     * @return string
+     */
+    private function safe(
+        string $key,
+        int $i,
+        string $text
+    ): string {
         $this->memory[$key][$i] = $text;
 
         return sprintf('##%s_%s##', $key, $i);
     }
 
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
     private function unSafe(string $key): string
     {
         $key = trim($key, '#');
@@ -169,7 +212,7 @@ class SafeBlock
             return '';
         }
 
-        if (!str_contains($key, '_')) {
+        if (false === strpos($key, '_')) {
             return $key;
         }
 

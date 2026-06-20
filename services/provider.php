@@ -3,7 +3,7 @@
  * @package     JU.Plugin
  * @subpackage  Content.JUTypography
  *
- * @copyright   Copyright (C) 2025-2026 Denes Nosov.
+ * @copyright   Copyright (C) 2025-2026 Denys Nosov
  * @license     GNU General Public License version 3 or later.
  */
 
@@ -21,7 +21,7 @@ return new class implements ServiceProviderInterface {
     /**
      * Registers the service provider with a DI container.
      *
-     * @param   Container  $container  The DI container.
+     * @param Container $container The DI container.
      *
      * @return  void
      *
@@ -31,18 +31,17 @@ return new class implements ServiceProviderInterface {
     {
         $container->set(
             PluginInterface::class,
-            function (Container $container)
-        {
-            $dispatcher = $container->get(DispatcherInterface::class);
-            $plugin     = new JUTypography(
-                $dispatcher,
-                (array)PluginHelper::getPlugin('content', 'jutypography')
-            );
+            function (Container $container) {
+                $dispatcher = $container->get(DispatcherInterface::class);
+                $plugin = new JUTypography(
+                    $dispatcher,
+                    (array)PluginHelper::getPlugin('content', 'jutypography')
+                );
 
-            $plugin->setApplication(Factory::getApplication());
+                $plugin->setApplication(Factory::getApplication());
 
-            return $plugin;
-        }
+                return $plugin;
+            }
         );
     }
 };

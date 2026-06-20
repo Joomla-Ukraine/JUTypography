@@ -3,47 +3,41 @@
  * @package     JU.Plugin
  * @subpackage  Content.JUTypography
  *
- * @copyright   Copyright (C) 2025 Denes Nosov.
+ * @copyright   Copyright (C) 2025-2026 Denys Nosov
  * @license     GNU General Public License version 3 or later.
  */
 
 namespace JUTypography;
 
-use FilesystemIterator;
-use JUTypography\Rule\AbstractRule;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
-use ReflectionException;
 
 class RuleFinder
 {
     /**
      * @var string[]
      */
-    public static array $rules = [];
+    public static $rules = [];
 
     /**
      * @return string[]
      *
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     public static function getAllRule(): array
     {
         if (empty(static::$rules)) {
-            $baseClass = new ReflectionClass(AbstractRule::class);
+            $baseClass = new ReflectionClass('JUTypography\Rule\AbstractRule');
 
             $files = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    __DIR__.DIRECTORY_SEPARATOR.'Rule',
-                    FilesystemIterator::SKIP_DOTS
+                    __DIR__.DIRECTORY_SEPARATOR.'Rule', RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 
             foreach ($files as $file) {
-                $className = static::getClassNameByFilePath(
-                    $file->getPathname()
-                );
+                $className = static::getClassNameByFilePath($file->getPathname());
                 if (class_exists($className)) {
                     $reflectionClass = new ReflectionClass($className);
                     if ($reflectionClass->isSubclassOf($baseClass)) {
@@ -56,12 +50,18 @@ class RuleFinder
         return static::$rules;
     }
 
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
     protected static function getClassNameByFilePath(string $path): string
     {
-        return str_replace(
-            [__DIR__, '.php', '/'],
-            ['JUTypography', '', '\\'],
-            $path
-        );
+        $class = str_replace([__DIR__, '.php'], [
+            'JUTypography',
+            '',
+        ], $path);
+
+        return str_replace('/', '\\', $class);
     }
 }

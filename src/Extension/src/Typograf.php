@@ -3,37 +3,31 @@
  * @package     JU.Plugin
  * @subpackage  Content.JUTypography
  *
- * @copyright   Copyright (C) 2025 Denes Nosov.
+ * @copyright   Copyright (C) 2025-2026 Denys Nosov
  * @license     GNU General Public License version 3 or later.
  */
 
 namespace JUTypography;
 
 use Exception;
-use JUTypography\Rule\AbstractRule;
-use ReflectionException;
-use RuntimeException;
 
 class Typograf
 {
     /**
      * @var Rule\AbstractRule[]
      */
-    protected array $rules = [];
+    protected $rules = [];
 
     /**
      * @var Debug
      */
-    protected Debug $debug;
+    protected $debug;
 
     /**
      * @var SafeBlock
      */
-    protected SafeBlock $safeBlock;
+    protected $safeBlock;
 
-    /**
-     * @throws ReflectionException
-     */
     public function __construct(bool $debug = false)
     {
         if (true === $debug) {
@@ -46,10 +40,7 @@ class Typograf
 
     public function addRule(object $ruleClass): void
     {
-        if (true === is_subclass_of(
-                $ruleClass,
-                AbstractRule::class
-            )) {
+        if (true === is_subclass_of($ruleClass, 'JUTypography\Rule\AbstractRule')) {
             $this->rules[spl_object_hash($ruleClass)] = $ruleClass;
             $this->sortRule();
         }
@@ -57,42 +48,43 @@ class Typograf
 
     /**
      * @param mixed $text
-     *
-     * @return string
      */
-    public function apply(mixed $text): string
+    public function apply($text): string
     {
         $text = (string)$text;
-        $this->debug?->setStartValue($text);
+        if (null !== $this->debug) {
+            $this->debug->setStartValue($text);
+        }
 
         $newText = $this->safeBlock->on($text);
 
         foreach ($this->rules as $rule) {
             $startText = $newText;
             if (false === $rule->getActive()) {
-                $this->debug?->addTrace(
-                    $rule,
-                    $startText,
-                    $newText,
-                    Debug::STATUS_DEACTIVATE
-                );
+                if (null !== $this->debug) {
+                    $this->debug->addTrace($rule, $startText, $newText, Debug::STATUS_DEACTIVATE);
+                }
 
                 continue;
             }
 
             $newText = $rule->handler($newText);
 
-            $this->debug?->addTrace(
-                $rule,
-                $startText,
-                $newText,
-                $startText !== $newText ? Debug::STATUS_MODIFY : Debug::STATUS_NOT_MODIFY
-            );
+            if (null !== $this->debug) {
+                $this->debug->addTrace(
+                    $rule,
+                    $startText,
+                    $newText,
+                    $startText !== $newText ? Debug::STATUS_MODIFY : Debug::STATUS_NOT_MODIFY
+                );
+            }
         }
 
         $newText = $this->safeBlock->off($newText);
 
-        $this->debug?->setEndValue($newText);
+        if (null !== $this->debug) {
+            $this->debug->setEndValue($newText);
+        }
 
         return $newText;
     }
@@ -121,7 +113,7 @@ class Typograf
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getDebug(): Debug
     {
@@ -129,22 +121,15 @@ class Typograf
             return $this->debug;
         }
 
-        throw new RuntimeException('Debug mode not enable');
+        throw new Exception('Debug mode not enable');
     }
 
-    /**
-     * @throws ReflectionException
-     */
     protected function initRules(): void
     {
         $all = RuleFinder::getAllRule();
 
         foreach ($all as $ruleClass) {
-            /**
-             * @var Rule\AbstractRule $ruleObj
-             */
             $ruleObj = new $ruleClass();
-
             $this->rules[$ruleClass] = $ruleObj;
         }
 
@@ -153,13 +138,18 @@ class Typograf
 
     protected function sortRule(): void
     {
-        uasort($this->rules, static function ($a, $b) {
-            return $a->getSort() <=> $b->getSort();
-        });
+        uasort(
+            $this->rules,
+            static function ($a, $b) {
+                return $a->getSort() <=> $b->getSort();
+            }
+        );
     }
 
-    final protected function changeRule(string $name, bool $active): void
-    {
+    final protected function changeRule(
+        string $name,
+        bool $active
+    ): void {
         if ('*' === $name) {
             foreach ($this->rules as $rule) {
                 $rule->setActive($active);
@@ -169,8 +159,10 @@ class Typograf
                     '\\\\',
                     '.+',
                 ], $name).'$#';
+
             foreach ($this->rules as $rule) {
                 preg_match($pattern, get_class($rule), $matches);
+
                 if (!empty($matches)) {
                     $rule->setActive($active);
                 }

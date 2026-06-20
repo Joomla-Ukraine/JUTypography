@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class Hellip extends AbstractRule
 {
-	public $name = 'Hellip';
+    public string $name = 'Hellip';
 
-	protected $sort = 800;
+    protected int $sort = 800;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#(\.\.\.)#iu';
+    public function handler(string $text): string
+    {
+        $pattern = '#(\.\.\.)#iu';
 
-		$replace = '&hellip;';
+        $replace = '&hellip;';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

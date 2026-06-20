@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class ExclamationQuestion extends AbstractRule
 {
-	public $name = 'Exclamation Question';
+    public string $name = 'Exclamation Question';
 
-	public $sort = 800;
+    public int $sort = 800;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#([' . $this->char[ 'char' ] . '])!\?(\s|$|<)#iu';
+    public function handler(string $text): string
+    {
+        $pattern = '#(['.$this->char['char'].'])!\?(\s|$|<)#iu';
 
-		$replace = '$1?!$2';
+        $replace = '$1?!$2';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

@@ -9,7 +9,9 @@
 
 namespace JUTypography;
 
+use Exception;
 use JUTypography\Rule\AbstractRule;
+use ReflectionException;
 use RuntimeException;
 
 class Typograf
@@ -17,20 +19,20 @@ class Typograf
     /**
      * @var Rule\AbstractRule[]
      */
-    protected $rules = [];
+    protected array $rules = [];
 
     /**
      * @var Debug
      */
-    protected $debug;
+    protected Debug $debug;
 
     /**
      * @var SafeBlock
      */
-    protected $safeBlock;
+    protected SafeBlock $safeBlock;
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function __construct(bool $debug = false)
     {
@@ -48,57 +50,49 @@ class Typograf
                 $ruleClass,
                 AbstractRule::class
             )) {
-            $this->rules[ spl_object_hash($ruleClass) ] = $ruleClass;
+            $this->rules[spl_object_hash($ruleClass)] = $ruleClass;
             $this->sortRule();
         }
     }
 
     /**
-     * @param   mixed  $text
+     * @param mixed $text
      *
      * @return string
      */
     public function apply(mixed $text): string
     {
         $text = (string)$text;
-        if (null !== $this->debug) {
-            $this->debug->setStartValue($text);
-        }
+        $this->debug?->setStartValue($text);
 
         $newText = $this->safeBlock->on($text);
 
         foreach ($this->rules as $rule) {
             $startText = $newText;
             if (false === $rule->getActive()) {
-                if (null !== $this->debug) {
-                    $this->debug->addTrace(
-                        $rule,
-                        $startText,
-                        $newText,
-                        Debug::STATUS_DEACTIVATE
-                    );
-                }
+                $this->debug?->addTrace(
+                    $rule,
+                    $startText,
+                    $newText,
+                    Debug::STATUS_DEACTIVATE
+                );
 
                 continue;
             }
 
             $newText = $rule->handler($newText);
 
-            if (null !== $this->debug) {
-                $this->debug->addTrace(
-                    $rule,
-                    $startText,
-                    $newText,
-                    $startText !== $newText ? Debug::STATUS_MODIFY : Debug::STATUS_NOT_MODIFY
-                );
-            }
+            $this->debug?->addTrace(
+                $rule,
+                $startText,
+                $newText,
+                $startText !== $newText ? Debug::STATUS_MODIFY : Debug::STATUS_NOT_MODIFY
+            );
         }
 
         $newText = $this->safeBlock->off($newText);
 
-        if (null !== $this->debug) {
-            $this->debug->setEndValue($newText);
-        }
+        $this->debug?->setEndValue($newText);
 
         return $newText;
     }
@@ -127,7 +121,7 @@ class Typograf
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDebug(): Debug
     {
@@ -139,7 +133,7 @@ class Typograf
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function initRules(): void
     {
@@ -151,7 +145,7 @@ class Typograf
              */
             $ruleObj = new $ruleClass();
 
-            $this->rules[ $ruleClass ] = $ruleObj;
+            $this->rules[$ruleClass] = $ruleObj;
         }
 
         $this->sortRule();
@@ -159,8 +153,7 @@ class Typograf
 
     protected function sortRule(): void
     {
-        uasort($this->rules, static function ($a, $b)
-        {
+        uasort($this->rules, static function ($a, $b) {
             return $a->getSort() <=> $b->getSort();
         });
     }

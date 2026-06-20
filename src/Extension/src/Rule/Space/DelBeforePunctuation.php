@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class DelBeforePunctuation extends AbstractRule
 {
-	public $name = 'Del Before Punctuation';
+    public string $name = 'Del Before Punctuation';
 
-	protected $sort = 300;
+    protected int $sort = 300;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#((\s|&nbsp;)+)([' . $this->char[ 'charEnd' ] . '])(\s+|$)#iu';
+    public function handler(string $text): string
+    {
+        $pattern = '#((\s|&nbsp;)+)(['.$this->char['charEnd'].'])(\s+|$)#iu';
 
-		$replace = '$3$4';
+        $replace = '$3$4';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

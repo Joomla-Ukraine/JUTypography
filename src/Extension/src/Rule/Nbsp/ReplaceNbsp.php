@@ -13,14 +13,14 @@ use JUTypography\Rule\AbstractRule;
 
 class ReplaceNbsp extends AbstractRule
 {
-	public $name = 'Replace Nbsp';
+    public string $name = 'Replace Nbsp';
 
-	protected $sort = -100;
+    protected int $sort = -100;
 
-	protected $active = false;
+    protected bool $active = false;
 
-	public function handler(string $text): string
-	{
-		return str_replace($this->char[ 'nbsp' ], ' ', $text);
-	}
+    public function handler(string $text): string
+    {
+        return str_replace($this->char['nbsp'], ' ', $text);
+    }
 }

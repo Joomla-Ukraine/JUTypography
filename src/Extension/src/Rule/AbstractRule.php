@@ -14,35 +14,35 @@ abstract class AbstractRule
     /**
      * @var string
      */
-    public $name = 'Name rule';
+    public string $name = 'Name rule';
 
     /**
      * @var array
      */
-    protected $char = [
+    protected array $char = [
         'allQuote' => '«‹»›„“‟”"\'',
-        'allDash'  => '-|‒|–|—',
-        'charEnd'  => '.,!?:;',
-        'char'     => 'а-яєїґa-z',
+        'allDash' => '-|‒|–|—',
+        'charEnd' => '.,!?:;',
+        'char' => 'а-яєїґa-z',
         'charCase' => 'а-яєїґa-zA-ЯЄЇҐA-Z',
-        'nbsp'     => '&nbsp;',
-        'dash'     => '&mdash;',
+        'nbsp' => '&nbsp;',
+        'dash' => '&mdash;',
     ];
 
     /**
      * @var bool
      */
-    protected $active = true;
+    protected bool $active = true;
 
     /**
      * @var int
      */
-    protected $sort = 500;
+    protected int $sort = 500;
 
     /**
      * @var array
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     public function setSort(int $sort): void
     {
@@ -65,7 +65,7 @@ abstract class AbstractRule
     }
 
     /**
-     * @param   array  $settings
+     * @param array $settings
      */
     public function setSettings(array $settings): void
     {
@@ -73,12 +73,12 @@ abstract class AbstractRule
     }
 
     /**
-     * @param   string  $key
-     * @param   mixed   $value
+     * @param string $key
+     * @param mixed $value
      */
     public function setSetting(string $key, mixed $value): void
     {
-        $this->settings[ $key ] = $value;
+        $this->settings[$key] = $value;
     }
 
     /**

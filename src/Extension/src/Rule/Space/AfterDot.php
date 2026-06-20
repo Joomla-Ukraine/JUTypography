@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class AfterDot extends AbstractRule
 {
-	public $name = 'After Dot';
+    public string $name = 'After Dot';
 
-	protected $sort = 300;
+    protected int $sort = 300;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#([' . $this->char[ 'char' ] . '0-9]{2,})\.([А-ЯЁA-Z\n])#u';
+    public function handler(string $text): string
+    {
+        $pattern = '#(['.$this->char['char'].'0-9]{2,})\.([А-ЯЁA-Z\n])#u';
 
-		$replace = '$1. $2';
+        $replace = '$1. $2';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

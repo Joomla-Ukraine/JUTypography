@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class DelBeforeLine extends AbstractRule
 {
-	public $name = 'Del Before Line';
+    public string $name = 'Del Before Line';
 
-	protected $sort = -100;
+    protected int $sort = -100;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#^[ \t]+#mu';
+    public function handler(string $text): string
+    {
+        $pattern = '#^[ \t]+#mu';
 
-		$replace = '';
+        $replace = '';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

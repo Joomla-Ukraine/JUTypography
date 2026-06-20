@@ -13,20 +13,20 @@ use JUTypography\Rule\AbstractRule;
 
 class Bracket extends AbstractRule
 {
-	public $name = 'Bracket';
+    public string $name = 'Bracket';
 
-	public function handler(string $text): string
-	{
-		$pattern = [
-			'#(\()\s+#u',
-			'#\s+\)#u',
-		];
+    public function handler(string $text): string
+    {
+        $pattern = [
+            '#(\()\s+#u',
+            '#\s+\)#u',
+        ];
 
-		$replace = [
-			'(',
-			')',
-		];
+        $replace = [
+            '(',
+            ')',
+        ];
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

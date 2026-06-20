@@ -14,18 +14,19 @@ use JUTypography\Rule\AbstractRule;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use ReflectionException;
 
 class RuleFinder
 {
     /**
      * @var string[]
      */
-    public static $rules = [];
+    public static array $rules = [];
 
     /**
      * @return string[]
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function getAllRule(): array
     {

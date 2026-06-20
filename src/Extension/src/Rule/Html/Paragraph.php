@@ -13,11 +13,11 @@ use JUTypography\Rule\AbstractRule;
 
 class Paragraph extends AbstractRule
 {
-    public $name = 'Paragraph <p>';
+    public string $name = 'Paragraph <p>';
 
-    protected $active = false;
+    protected bool $active = false;
 
-    protected $sort = 800;
+    protected int $sort = 800;
 
     public function handler(string $text): string
     {

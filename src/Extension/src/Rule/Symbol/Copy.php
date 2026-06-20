@@ -13,22 +13,22 @@ use JUTypography\Rule\AbstractRule;
 
 class Copy extends AbstractRule
 {
-	public $name = 'Copy ©, TM ™,®';
+    public string $name = 'Copy ©, TM ™,®';
 
-	public function handler(string $text): string
-	{
-		$pattern = [
-			'#\(r\)#iu',
-			'#(copyright )?\((c|с)\)#iu',
-			'#\(tm\)#iu',
-		];
+    public function handler(string $text): string
+    {
+        $pattern = [
+            '#\(r\)#iu',
+            '#(copyright )?\((c|с)\)#iu',
+            '#\(tm\)#iu',
+        ];
 
-		$replace = [
-			'&reg;',
-			'&copy;',
-			'&trade;',
-		];
+        $replace = [
+            '&reg;',
+            '&copy;',
+            '&trade;',
+        ];
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

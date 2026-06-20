@@ -13,14 +13,14 @@ use JUTypography\Rule\AbstractRule;
 
 class Apostrophe extends AbstractRule
 {
-	public $name = 'Apostrophe';
+    public string $name = 'Apostrophe';
 
-	public function handler(string $text): string
-	{
-		$pattern = '#([' . $this->char[ 'char' ] . ']+)\'([' . $this->char[ 'char' ] . ']+)#iu';
+    public function handler(string $text): string
+    {
+        $pattern = '#(['.$this->char['char'].']+)\'(['.$this->char['char'].']+)#iu';
 
-		$replace = '$1&rsquo;$2';
+        $replace = '$1&rsquo;$2';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

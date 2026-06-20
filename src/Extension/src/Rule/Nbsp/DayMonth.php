@@ -13,13 +13,13 @@ use JUTypography\Rule\AbstractRule;
 
 class DayMonth extends AbstractRule
 {
-	public $name = 'Day Month';
+    public string $name = 'Day Month';
 
-	public function handler(string $text): string
-	{
-		$pattern = '#(\d{1,2}) (' . $this->char[ 'monthShort' ] . ')#iu';
-		$replace = '$1' . $this->char[ 'nbsp' ] . '$2';
+    public function handler(string $text): string
+    {
+        $pattern = '#(\d{1,2}) ('.$this->char['monthShort'].')#iu';
+        $replace = '$1'.$this->char['nbsp'].'$2';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

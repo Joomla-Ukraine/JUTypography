@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class DelRepeatN extends AbstractRule
 {
-	public $name = 'Del Repeat N';
+    public string $name = 'Del Repeat N';
 
-	protected $sort = -100;
+    protected int $sort = -100;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#\n{2,}#u';
+    public function handler(string $text): string
+    {
+        $pattern = '#\n{2,}#u';
 
-		$replace = "\n";
+        $replace = "\n";
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

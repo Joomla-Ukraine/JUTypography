@@ -13,16 +13,16 @@ use JUTypography\Rule\AbstractRule;
 
 class AfterPunctuation extends AbstractRule
 {
-	public $name = 'After Punctuation';
+    public string $name = 'After Punctuation';
 
-	protected $sort = 300;
+    protected int $sort = 300;
 
-	public function handler(string $text): string
-	{
-		$pattern = '#(\s|&nbsp;|^)([' . $this->char[ 'char' ] . '0-9]+)(\s|&nbsp;)?(:|\)|,|&hellip;|[!?]+)([' . $this->char[ 'char' ] . '])#iu';
+    public function handler(string $text): string
+    {
+        $pattern = '#(\s|&nbsp;|^)(['.$this->char['char'].'0-9]+)(\s|&nbsp;)?(:|\)|,|&hellip;|[!?]+)(['.$this->char['char'].'])#iu';
 
-		$replace = '$1$2$4 $5';
+        $replace = '$1$2$4 $5';
 
-		return preg_replace($pattern, $replace, $text);
-	}
+        return preg_replace($pattern, $replace, $text);
+    }
 }

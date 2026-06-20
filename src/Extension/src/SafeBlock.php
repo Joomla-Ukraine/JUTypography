@@ -14,12 +14,12 @@ class SafeBlock
     /**
      * @var string[][]
      */
-    protected $safeBlocks = [];
+    protected array $safeBlocks = [];
 
     /**
      * @var string[]
      */
-    protected $defaultSafeTags = [
+    protected array $defaultSafeTags = [
         'head',
         'pre',
         'code',
@@ -30,7 +30,7 @@ class SafeBlock
     /**
      * @var string[]
      */
-    protected $defaultSafeRegexp = [
+    protected array $defaultSafeRegexp = [
         '/<!--(.+?)-->/ius',
         '/\[[a-z]([^]]+)]/ius',
         '/<span class=["\']no-typo["\']>(.+?)<\/span>/ius',
@@ -40,7 +40,7 @@ class SafeBlock
     /**
      * @var array
      */
-    private $memory = [];
+    private array $memory = [];
 
     public function __construct()
     {
@@ -55,11 +55,11 @@ class SafeBlock
 
     public function addTag(string $tag): void
     {
-        $res              = [];
-        $res[ 'pattern' ] = $this->getPattern([
-            'open'  => '<'.preg_quote($tag).'[^>]*>',
+        $res = [];
+        $res['pattern'] = $this->getPattern([
+            'open' => '<'.preg_quote($tag).'[^>]*>',
             'close' => '<\/'.preg_quote($tag).'>',
-            'tag'   => $tag,
+            'tag' => $tag,
         ]);
 
         $this->addBlock($res);
@@ -75,35 +75,34 @@ class SafeBlock
     public function on(string $text): string
     {
         $this->memory = [];
-        $text         = $this->safeBlockContent($text);
+        $text = $this->safeBlockContent($text);
 
         return $this->safeTagAttr($text);
     }
 
     public function safeBlockContent(string $text, bool $back = false): string
     {
-        $key    = 'bc';
-        $i      = false === $back ? 1 : count($this->memory[ $key ] ?? []);
+        $key = 'bc';
+        $i = false === $back ? 1 : count($this->memory[$key] ?? []);
         $blocks = false === $back ? $this->safeBlocks : array_reverse(
             $this->safeBlocks
         );
 
         foreach ($blocks as $block) {
             $text = preg_replace_callback(
-                $block[ 'pattern' ],
-                function ($matches) use (&$i, $key, $back)
-                {
+                $block['pattern'],
+                function ($matches) use (&$i, $key, $back) {
                     $safeContent = match ($back) {
-                        true => $this->unSafe($matches[ 1 ]),
-                        default => $this->safe($key, $i, $matches[ 1 ]),
+                        true => $this->unSafe($matches[1]),
+                        default => $this->safe($key, $i, $matches[1]),
                     };
 
                     false === $back ? ++$i : $i--;
 
                     return str_replace(
-                        $matches[ 1 ],
+                        $matches[1],
                         $safeContent,
-                        $matches[ 0 ]
+                        $matches[0]
                     );
                 },
                 $text
@@ -119,16 +118,15 @@ class SafeBlock
 
         return preg_replace_callback(
             '/<[^\/]([^>]+)>/ius',
-            function ($matches) use (&$i, $back)
-            {
+            function ($matches) use (&$i, $back) {
                 $safeContent = match ($back) {
-                    true => $this->unSafe($matches[ 1 ]),
-                    default => $this->safe('tag', $i, $matches[ 1 ]),
+                    true => $this->unSafe($matches[1]),
+                    default => $this->safe('tag', $i, $matches[1]),
                 };
 
                 ++$i;
 
-                return str_replace($matches[ 1 ], $safeContent, $matches[ 0 ]);
+                return str_replace($matches[1], $safeContent, $matches[0]);
             },
             $text
         );
@@ -142,7 +140,7 @@ class SafeBlock
     }
 
     /**
-     * @param   string[]  $arBlock
+     * @param string[] $arBlock
      */
     protected function addBlock(array $arBlock): void
     {
@@ -150,16 +148,16 @@ class SafeBlock
     }
 
     /**
-     * @param   string[]  $arBlock
+     * @param string[] $arBlock
      */
     final protected function getPattern(array $arBlock): string
     {
-        return '/'.$arBlock[ 'open' ].'(.*?)'.$arBlock[ 'close' ].'/ius';
+        return '/'.$arBlock['open'].'(.*?)'.$arBlock['close'].'/ius';
     }
 
     private function safe(string $key, int $i, string $text): string
     {
-        $this->memory[ $key ][ $i ] = $text;
+        $this->memory[$key][$i] = $text;
 
         return sprintf('##%s_%s##', $key, $i);
     }
@@ -171,12 +169,12 @@ class SafeBlock
             return '';
         }
 
-        if (false === strpos($key, '_')) {
+        if (!str_contains($key, '_')) {
             return $key;
         }
 
         [$key, $i] = explode('_', $key, 2);
 
-        return $this->memory[ $key ][ $i ] ?? '';
+        return $this->memory[$key][$i] ?? '';
     }
 }

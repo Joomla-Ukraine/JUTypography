@@ -275,6 +275,10 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             $node->parentNode->removeAttribute($node->nodeName);
         }
 
+        foreach ($xpath->query('//@data-path') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
         /*
          * HTML attributes
          */

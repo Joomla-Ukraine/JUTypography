@@ -172,7 +172,6 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
         $typo->enableRule('*');
 
         $text = $typo->apply($text);
-        $text = str_replace(['  ', '  '], ' ', $text);
 
         if ($strip === true) {
             $text = strip_tags($text);
@@ -535,6 +534,8 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
      */
     protected function removeEmptyParagraphs($text): string
     {
+        $text = str_replace(['  ', '  '], ' ', $text);
+
         return preg_replace(
             '~<p[^>]*>(?:\s|&nbsp;|&#160;| |&thinsp;|&ensp;|&emsp;|&ZeroWidthSpace;|&#8203;|&#xfeff;)*</p>~iu',
             '',

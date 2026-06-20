@@ -225,9 +225,80 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             if ($this->params->get('style', 0) == 1) {
                 $text = $this->removeStyles($text);
             }
+
+            if ($this->params->get('attr', 0) == 1) {
+                $text = $this->removeDataAttributes($text);
+            }
         }
 
         return $text;
+    }
+
+    protected function removeDataAttributes(string $html): string
+    {
+        $dom = new DOMDocument();
+
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(
+            '<?xml encoding="UTF-8">'.$html,
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        );
+        libxml_clear_errors();
+
+        $xpath = new \DOMXPath($dom);
+
+        /*
+         * TinyMCE
+         */
+        foreach ($xpath->query('//@*[starts-with(name(), "data-mce-")]') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@*[starts-with(name(), "mce-")]') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        /*
+         * HTML attributes
+         */
+        foreach ($xpath->query('//@lang') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@align') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@dir') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@aria-level') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@role') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        /*
+         * AI
+         */
+        foreach ($xpath->query('//@*[contains(name(), "ng-")]') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        $body = $xpath->query('/html/body')->item(0);
+        if ($body) {
+            $cleanHtml = '';
+            foreach ($body->childNodes as $node) {
+                $cleanHtml .= $dom->saveHTML($node);
+            }
+
+            return $cleanHtml;
+        }
+
+        return $dom->saveHTML();
     }
 
     /**

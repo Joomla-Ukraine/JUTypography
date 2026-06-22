@@ -309,6 +309,34 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             $node->parentNode->removeAttribute($node->nodeName);
         }
 
+        foreach ($xpath->query('//@*[contains(name(), "_ngcontent-ng-")]') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@data-section-id') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@data-start') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@data-end') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@data-is-last-node') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@data-is-only-node') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
+        foreach ($xpath->query('//@data-col-size') as $node) {
+            $node->parentNode->removeAttribute($node->nodeName);
+        }
+
         $body = $xpath->query('/html/body')->item(0);
         if ($body) {
             $cleanHtml = '';

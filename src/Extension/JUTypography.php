@@ -251,6 +251,65 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
         return $text;
     }
 
+    /**
+     * @param DOMDocument $dom
+     * @param string $html
+     *
+     * @return bool
+     *
+     * @since 1.0
+     */
+    private function loadHTMLSafely(
+        DOMDocument $dom,
+        string $html
+    ): bool {
+        libxml_use_internal_errors(true);
+        libxml_clear_errors();
+
+        $html = '<?xml encoding="UTF-8"?>'.$html;
+
+        $result = $dom->loadHTML(
+            $html,
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR
+        );
+
+        foreach ($dom->childNodes as $item) {
+            if ($item->nodeType === XML_PI_NODE) {
+                $dom->removeChild($item);
+
+                break;
+            }
+        }
+
+        $dom->encoding = 'UTF-8';
+
+        return $result;
+    }
+
+    /**
+     * @param DOMDocument $dom
+     *
+     * @return string
+     *
+     * @since 1.0
+     */
+    private function getInnerHTML(DOMDocument $dom): string
+    {
+        $body = $dom->getElementsByTagName('body')->item(0);
+
+        if (!$body) {
+            return $dom->saveHTML();
+        }
+
+        $innerHTML = '';
+
+        foreach ($body->childNodes as $child) {
+            $innerHTML .= $dom->saveHTML($child);
+        }
+
+        return $innerHTML;
+    }
+
     protected function removeDataAttributes(string $html): string
     {
         $dom = new DOMDocument();

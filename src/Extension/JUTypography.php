@@ -102,84 +102,78 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
     }
 
     /**
-     * @param        $text
+     * @param        $html
      *
      * @return string
      * @throws \Exception
      */
-    protected function protectBlocks($text): string
+    protected function protectBlocks($html): string
     {
-        $text = preg_replace_callback(
+        $html = preg_replace_callback(
             '/\[(\w+)](.*?)\[\/\1]/si',
             function ($matches) {
                 return $this->storePlaceholder($matches[0]);
             },
-            $text
+            $html
         );
 
-        $text = preg_replace_callback(
+        $html = preg_replace_callback(
             '/\{(\w+)}(.*?)\{\/\1}/si',
             function ($matches) {
                 return $this->storePlaceholder($matches[0]);
             },
-            $text
+            $html
         );
 
         return preg_replace_callback('/\{.*?\}/s', function ($matches) {
             return $this->storePlaceholder($matches[0]);
-        }, $text);
+        }, $html);
     }
 
     /**
-     * @param        $text
+     * @param        $html
      *
      * @return string
      * @throws \Exception
      */
-    protected function restoreBlocks($text): string
+    protected function restoreBlocks($html): string
     {
         foreach ($this->placeholders as $key => $original) {
-            $text = str_replace($key, $original, $text);
+            $html = str_replace($key, $original, $html);
         }
 
-        return $text;
+        return $html;
     }
 
     /**
-     * @param        $text
+     * @param        $html
      *
      * @return string
      * @throws \Exception
      */
-    protected function storePlaceholder($text): string
+    protected function storePlaceholder($html): string
     {
         $key = '__PLACEHOLDER_'.$this->placeholderIndex++.'__';
-        $this->placeholders[$key] = $text;
+        $this->placeholders[$key] = $html;
 
         return $key;
     }
 
     /**
-     * @param         $text
+     * @param         $html
      * @param bool $strip
      *
      * @return string
      * @throws \Exception
      */
-    protected function typography($text, bool $strip = false): string
+    protected function typography($html, bool $strip = false): string
     {
         $typo = new Typograf();
         $typo->enableRule('*');
-
-        $text = $typo->apply($text);
+        $html = $typo->apply($html);
 
         if ($strip === true) {
-            $text = strip_tags($text);
-            $text = html_entity_decode(
-                $text,
-                ENT_QUOTES | ENT_HTML5,
-                'UTF-8'
-            );
+            $html = strip_tags($html);
         }
 
         if ($strip === false) {
@@ -230,25 +224,26 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
                 $table
             );
 
-            $text = $this->removeAttributesFromTags(
-                $text,
+            $html = $this->removeAttributesFromTags(
+                $html,
                 $tags
             );
 
-            $text = $this->removeStrongHeaders($text);
-            $text = $this->removeDashList($text);
-            $text = $this->removeEmptyParagraphs($text);
+            $html = $this->removeStrongHeaders($html);
+            $html = $this->removeDashList($html);
+            $html = $this->removeEmptyParagraphs($html);
 
             if ($this->params->get('style', 0) == 1) {
-                $text = $this->removeStyles($text);
+                $html = $this->removeStyles($html);
             }
 
             if ($this->params->get('attr', 0) == 1) {
-                $text = $this->removeDataAttributes($text);
+                $html = $this->removeDataAttributes($html);
             }
         }
 
         return $text;
+        return $html;
     }
 
     /**
@@ -312,14 +307,12 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
     protected function removeDataAttributes(string $html): string
     {
-        $dom = new DOMDocument();
+        if (empty(trim($html))) {
+            return $html;
+        }
 
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8">'.$html,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $this->loadHTMLSafely($dom, $html);
 
         $xpath = new \DOMXPath($dom);
 
@@ -406,7 +399,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             return $cleanHtml;
         }
 
-        return $dom->saveHTML();
+        return $this->getInnerHTML($dom);
     }
 
     /**
@@ -416,14 +409,12 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
      */
     protected function removeStyles($html)
     {
-        $dom = new DOMDocument();
+        if (empty(trim($html))) {
+            return $html;
+        }
 
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8">'.$html,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $this->loadHTMLSafely($dom, $html);
 
         $elements = $dom->getElementsByTagName('*');
 
@@ -445,7 +436,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             }
         }
 
-        return $dom->saveHTML();
+        return $this->getInnerHTML($dom);
     }
 
     /**
@@ -457,23 +448,28 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
      */
     protected function fixTableStructure($html): bool|string
     {
-        $dom = new DOMDocument();
+        if (empty(trim($html))) {
+            return $html;
+        }
 
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8">'.$html,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $this->loadHTMLSafely($dom, $html);
 
         $tables = $dom->getElementsByTagName('table');
+
         foreach ($tables as $table) {
-            $thead = $table->getElementsByTagName('thead')->item(0);
+            $thead = $table
+                ->getElementsByTagName('thead')
+                ->item(0);
+
             if ($thead) {
                 continue;
             }
 
-            $firstTr = $table->getElementsByTagName('tr')->item(0);
+            $firstTr = $table
+                ->getElementsByTagName('tr')
+                ->item(0);
+
             if (!$firstTr) {
                 continue;
             }
@@ -487,6 +483,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             while ($strongTags->length > 0) {
                 $strong = $strongTags->item(0);
                 $textNode = $dom->createTextNode($strong->textContent);
+
                 $strong->parentNode->replaceChild($textNode, $strong);
             }
 
@@ -494,6 +491,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             while ($tdTags->length > 0) {
                 $td = $tdTags->item(0);
                 $th = $dom->createElement('th');
+
                 while ($td->hasChildNodes()) {
                     $th->appendChild($td->firstChild);
                 }
@@ -508,6 +506,7 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             $tbody = $table->getElementsByTagName('tbody')->item(0);
             if (!$tbody) {
                 $tbody = $dom->createElement('tbody');
+
                 $table->insertBefore($tbody, $thead->nextSibling);
             }
 
@@ -515,23 +514,24 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             $trCount = $trNodes->length;
             for ($i = 0; $i < $trCount; $i++) {
                 $tr = $trNodes->item(0);
+
                 if ($tr->parentNode !== $thead && $tr->parentNode !== $tbody) {
                     $tbody->appendChild($tr);
                 }
             }
         }
 
-        return $dom->saveHTML();
+        return $this->getInnerHTML($dom);
     }
 
     /**
-     * @param             $text
+     * @param             $html
      * @param string[] $tags
      *
      * @return string
      */
     protected function removeAttributesFromTags(
-        $text,
+        $html,
         array $tags = [
             'h1',
             'h2',
@@ -547,64 +547,62 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             'td',
         ]
     ): string {
-        if (empty($text)) {
-            return $text;
+        if (empty(trim($html))) {
+            return $html;
         }
 
-        libxml_use_internal_errors(true);
-
-        $dom = new DOMDocument();
-        $dom->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8'));
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $this->loadHTMLSafely($dom, $html);
 
         foreach ($tags as $tag) {
             $elements = $dom->getElementsByTagName($tag);
+
             for ($i = $elements->length - 1; $i >= 0; $i--) {
                 $el = $elements->item($i);
+
                 while ($el->attributes->length) {
                     $el->removeAttribute($el->attributes->item(0)->nodeName);
                 }
             }
         }
 
-        $body = $dom->getElementsByTagName('body')->item(0);
-        $innerHTML = '';
-        foreach ($body->childNodes as $child) {
-            $innerHTML .= $dom->saveHTML($child);
-        }
-
-        return $innerHTML;
+        return $this->getInnerHTML($dom);
     }
 
     /**
-     * @param        $text
+     * @param        $html
      *
      * @return string
      */
-    protected function removeDashList($text): string
+    protected function removeDashList($html): string
     {
-        return str_replace(['<li>-', '<li> -', '<li> &bull;'], '<li>', $text);
+        if (empty(trim($html))) {
+            return $html;
+        }
+
+        return str_replace(['<li>-', '<li> -', '<li> &bull;'], '<li>', $html);
     }
 
     /**
-     * @param        $text
+     * @param        $html
      *
      * @return string
      */
-    protected function removeStrongHeaders($text): string
+    protected function removeStrongHeaders($html): string
     {
-        if (empty($text)) {
-            return $text;
+        if (empty(trim($html))) {
+            return $html;
         }
 
-        libxml_use_internal_errors(true);
-
-        $dom = new DOMDocument();
-        $dom->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8'));
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $this->loadHTMLSafely($dom, $html);
 
         foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
             $headings = $dom->getElementsByTagName($tag);
+
             for ($i = 0; $i < $headings->length; $i++) {
                 $heading = $headings->item($i);
+
                 $strongs = [];
                 foreach ($heading->getElementsByTagName('strong') as $strong) {
                     $strongs[] = $strong;
@@ -623,28 +621,26 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             }
         }
 
-        $body = $dom->getElementsByTagName('body')->item(0);
-        $innerHTML = '';
-        foreach ($body->childNodes as $child) {
-            $innerHTML .= $dom->saveHTML($child);
-        }
-
-        return $innerHTML;
+        return $this->getInnerHTML($dom);
     }
 
     /**
-     * @param        $text
+     * @param        $html
      *
      * @return string
      */
-    protected function removeEmptyParagraphs($text): string
+    protected function removeEmptyParagraphs($html): string
     {
-        $text = str_replace(['  ', '  '], ' ', $text);
+        if (empty(trim($html))) {
+            return $html;
+        }
+
+        $html = str_replace(['  ', '  '], ' ', $html);
 
         return preg_replace(
             '~<p[^>]*>(?:\s|&nbsp;|&#160;| |&thinsp;|&ensp;|&emsp;|&ZeroWidthSpace;|&#8203;|&#xfeff;)*</p>~iu',
             '',
-            $text
+            $html
         );
     }
 }

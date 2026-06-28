@@ -1,6 +1,6 @@
 <project name="jutypography" default="dist" basedir=".">
 
-    <property name="VERSION" value="1.3.7"/>
+    <property name="VERSION" value="1.3.8"/>
     <tstamp>
         <format property="DATE" pattern="%d.%m.%Y"/>
     </tstamp>

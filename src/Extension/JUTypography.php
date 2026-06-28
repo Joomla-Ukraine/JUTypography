@@ -168,6 +168,10 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
      */
     protected function typography($html, bool $strip = false): string
     {
+        if (empty(trim($html))) {
+            return $html;
+        }
+
         $typo = new Typograf();
         $typo->enableRule('*');
         $html = $typo->apply($html);
@@ -242,7 +246,12 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             }
         }
 
-        return $text;
+        $html = html_entity_decode(
+            trim($html),
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8'
+        );
+
         return $html;
     }
 

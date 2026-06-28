@@ -350,26 +350,47 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
             }
         }
 
-        foreach ($xpath->query('//@data-is-last-node') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
+        $trashClasses = [
+            'ng-star-inserted',
+            'ng-end-inserted',
+            'ng-begin-inserted',
+            'ng-tns-c',
+            'ng-trigger',
+            'ng-animate',
+        ];
 
-        foreach ($xpath->query('//@data-is-only-node') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
+        foreach ($xpath->query('//*[@class]') as $node) {
+            if ($node->hasAttribute('class')) {
+                $classes = explode(' ', $node->getAttribute('class'));
+                $cleanClasses = [];
 
-        foreach ($xpath->query('//@data-col-size') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
+                foreach ($classes as $class) {
+                    $class = trim($class);
 
-        $body = $xpath->query('/html/body')->item(0);
-        if ($body) {
-            $cleanHtml = '';
-            foreach ($body->childNodes as $node) {
-                $cleanHtml .= $dom->saveHTML($node);
+                    if (empty($class)) {
+                        continue;
+                    }
+
+                    $isTrash = false;
+                    foreach ($trashClasses as $trash) {
+                        if (str_contains($class, $trash)) {
+                            $isTrash = true;
+
+                            break;
+                        }
+                    }
+
+                    if (!$isTrash) {
+                        $cleanClasses[] = $class;
+                    }
+                }
+
+                if (empty($cleanClasses)) {
+                    $node->removeAttribute('class');
+                } else {
+                    $node->setAttribute('class', implode(' ', $cleanClasses));
+                }
             }
-
-            return $cleanHtml;
         }
 
         return $this->getInnerHTML($dom);

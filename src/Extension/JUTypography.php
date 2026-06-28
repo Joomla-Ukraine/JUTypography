@@ -325,65 +325,29 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
 
         $xpath = new \DOMXPath($dom);
 
-        /*
-         * TinyMCE
-         */
-        foreach ($xpath->query('//@*[starts-with(name(), "data-mce-")]') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
+        $queries = [
+            'starts-with(name(), "data-mce-")',
+            'starts-with(name(), "mce-")',
+            'name() = "data-path"',
+            'name() = "lang"',
+            'name() = "align"',
+            'name() = "dir"',
+            'name() = "aria-level"',
+            'name() = "role"',
+            'contains(name(), "ng-")',
+            'contains(name(), "_ngcontent")',
+            'name() = "data-section-id"',
+            'name() = "data-start"',
+            'name() = "data-end"',
+            'name() = "data-is-last-node"',
+            'name() = "data-is-only-node"',
+            'name() = "data-col-size"',
+        ];
 
-        foreach ($xpath->query('//@*[starts-with(name(), "mce-")]') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@data-path') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        /*
-         * HTML attributes
-         */
-        foreach ($xpath->query('//@lang') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@align') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@dir') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@aria-level') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@role') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        /*
-         * AI
-         */
-        foreach ($xpath->query('//@*[contains(name(), "ng-")]') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@*[contains(name(), "_ngcontent-ng-")]') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@data-section-id') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@data-start') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
-        }
-
-        foreach ($xpath->query('//@data-end') as $node) {
-            $node->parentNode->removeAttribute($node->nodeName);
+        foreach ($queries as $query) {
+            foreach ($xpath->query('//@*['.$query.']') as $node) {
+                $node->parentNode->removeAttribute($node->nodeName);
+            }
         }
 
         foreach ($xpath->query('//@data-is-last-node') as $node) {

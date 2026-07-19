@@ -548,14 +548,33 @@ final class JUTypography extends CMSPlugin implements SubscriberInterface
         $dom = new DOMDocument('1.0', 'UTF-8');
         $this->loadHTMLSafely($dom, $html);
 
+        $preserveTableAttrs = ['colgroup', 'colspan', 'rowspan'];
+        $tableTags = ['table', 'tr', 'td', 'th', 'thead', 'tbody'];
+
         foreach ($tags as $tag) {
             $elements = $dom->getElementsByTagName($tag);
 
             for ($i = $elements->length - 1; $i >= 0; $i--) {
                 $el = $elements->item($i);
 
-                while ($el->attributes->length) {
-                    $el->removeAttribute($el->attributes->item(0)->nodeName);
+                if (in_array($tag, $tableTags)) {
+                    $attrsToRemove = [];
+
+                    foreach ($el->attributes as $attr) {
+                        $attrName = $attr->nodeName;
+
+                        if (!in_array($attrName, $preserveTableAttrs)) {
+                            $attrsToRemove[] = $attrName;
+                        }
+                    }
+
+                    foreach ($attrsToRemove as $attrName) {
+                        $el->removeAttribute($attrName);
+                    }
+                } else {
+                    while ($el->attributes->length) {
+                        $el->removeAttribute($el->attributes->item(0)->nodeName);
+                    }
                 }
             }
         }
